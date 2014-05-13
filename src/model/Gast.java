@@ -54,7 +54,7 @@ public class Gast extends ModelHelp{
 	}
 	//Löscht Gast aus der DB
 	public void deleteGast(){
-		writeDb("delete from hotel.gast where GID = " + gid);
+		writeDb("delete from gast where GID = " + gid);
 	}
 	//Ändert Gastdaten
 	public void updateGast()

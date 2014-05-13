@@ -48,11 +48,11 @@ public class CalcPreis extends GUIHelp{
 		geb = new JDateChooser();
 		
 		//Query für SQL-Tabelle auf Startpanel wird gesetzt
-		query = "select hotel.gast.GID, hotel.gast.Vorname, hotel.gast.Name, hotel.gast.Geburtstag, "+ 
-				"hotel.buchung.BID, hotel.`zimmer-buchung`.ZID, hotel.buchung.Gesamtpreis "+ 
-				"from hotel.gast, hotel.buchung, hotel.`zimmer-buchung` "+
-				"where hotel.gast.GID = hotel.buchung.GID " +
-				"and hotel.buchung.BID = hotel.`zimmer-buchung`.BID";
+		query = "select gast.GID, gast.Vorname, gast.Name, gast.Geburtstag, "+ 
+				"buchung.BID, `zimmer-buchung`.ZID, buchung.Gesamtpreis "+ 
+				"from gast, buchung, `zimmer-buchung` "+
+				"where gast.GID = buchung.GID " +
+				"and buchung.BID = `zimmer-buchung`.BID";
 		
 		//Tabelle für Buchungen wird erstellt, erzeugt und zu contentpane hinzugefügt
 		searchBu = new JTableview(query);

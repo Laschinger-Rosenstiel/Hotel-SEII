@@ -64,7 +64,7 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 				{
 					//lf.setPw(lf.jpf2.getText());
 					//Passwort auf der DB ändern
-					writeDb("update hotel.benutzer set passwort ='"+lf.jpf2.getText()+"' where Benutzername = '"+user+"'");
+					writeDb("update hotel-seII.benutzer set passwort ='"+lf.jpf2.getText()+"' where Benutzername = '"+user+"'");
 					//ChangeFrame schließen und zurück zu Login
 					lf.launchLoginFrame();
 					lf.cf.dispose();
@@ -87,7 +87,7 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 			{
 				try{
 					//Vergleich Passwort mit DB-Eintrag
-					String passwort = selectDB("Select Passwort from benutzer where Benutzername = 'Rezeption'");
+					String passwort = selectDB("Select Passwort from hotel-seII.benutzer where Benutzername = 'Rezeption'");
 					System.out.println(passwort);
 					checkStringEmpty(lf.jpf.getText());
 					if(lf.jpf.getText().equals(passwort))
@@ -122,7 +122,7 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 
 				try{
 					//Passwort mit DB-Eintrag vergleichen
-					String passwort = selectDB("Select Passwort from benutzer where Benutzername = 'Manager'");
+					String passwort = selectDB("Select Passwort from hotel-seII.benutzer where Benutzername = 'Manager'");
 					checkStringEmpty(lf.jpf.getText());
 					if(lf.jpf.getText().equals(passwort))
 					{

@@ -49,30 +49,30 @@ public class Buchung extends ModelHelp{
 		long days = Math.round( (double)time / (24. * 60.*60.*1000.) );     // Differenz in Tagen
 		//Aufenthaltsdauer wurde berechnet
 		//Preis wird berechnet
-		String preis = selectDB("select Preis from hotel.zimmer where ZID = '"+ zimmer.getZid()+"'");
+		String preis = selectDB("select Preis from zimmer where ZID = '"+ zimmer.getZid()+"'");
 		//Gesamtpreis wird berechnet und gesetzt
 		this.bid = writeDbAi("INSERT INTO buchung (GID, Erfassungsdatum, Gesamtpreis) VALUES("+gast.getGid()+", '" + getSQLDate(erfassungsdatum) + "', "+preis+"*"+days+")");
 		//hotel-zimmerbuchung wird geschrieben
-		writeDbAi("INSERT INTO hotel.`zimmer-buchung` (BID, ZID, Von, Bis) VALUES("+getBid()+", "+zimmer.getZid()+
+		writeDbAi("INSERT INTO `zimmer-buchung` (BID, ZID, Von, Bis) VALUES("+getBid()+", "+zimmer.getZid()+
 		", '" + getSQLDate(von) + "', '" + getSQLDate(bis)+"'  )");
 	}
 	
 	public void bookDl(Buchung buchung, Dienstleistung dl) {
 		
 		//Dl-Buchung
-		String query = "insert into hotel.`dl-buchung` (DID, BID, Datum) values ("+dl.getDid()+", "+buchung.getBid()+", '"+getSQLDate(dl.getDate())+"')";
+		String query = "insert into `dl-buchung` (DID, BID, Datum) values ("+dl.getDid()+", "+buchung.getBid()+", '"+getSQLDate(dl.getDate())+"')";
 		int DLBID = writeDbAi(query);
 		dlbid = DLBID;
 		//Preis wird verändert
-		String query2 = "update hotel.buchung set Gesamtpreis = Gesamtpreis + (select Preis from hotel.dienstleistung where DID = '" + dl.getDid() +"')";
+		String query2 = "update buchung set Gesamtpreis = Gesamtpreis + (select Preis from dienstleistung where DID = '" + dl.getDid() +"')";
 		writeDb(query2);
 	}
 	
 	public void cancelZimmer(Buchung buchung) {
 		//stornierung Zimmerbuchung
 		this.bid=buchung.getBid();
-		writeDb("delete from hotel.`zimmer-buchung` where BID = " + bid);
-		writeDb("delete from hotel.buchung where BID = " +bid);
+		writeDb("delete from `zimmer-buchung` where BID = " + bid);
+		writeDb("delete from buchung where BID = " +bid);
 		
 	}
 	
@@ -81,8 +81,8 @@ public class Buchung extends ModelHelp{
 		this.bid = buchung.getBid();
 		dlbid = buchung.getDlbid();
 		//Gesamtpreis wird berechnet
-		writeDb("update hotel.buchung set Gesamtpreis = Gesamtpreis - (select Preis from hotel.dienstleistung where DID = '" + dl.getDid() +"')");
-		writeDb("delete from hotel.`dl-buchung` where DLBID = "+dlbid);
+		writeDb("update buchung set Gesamtpreis = Gesamtpreis - (select Preis from dienstleistung where DID = '" + dl.getDid() +"')");
+		writeDb("delete from `dl-buchung` where DLBID = "+dlbid);
 	}
 	
 	//getter- und setter-Methoden

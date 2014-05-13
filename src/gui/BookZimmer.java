@@ -87,7 +87,7 @@ public class BookZimmer extends GUIHelp{
 		jb3.addActionListener(new BHBook(this));
 		
 		//Query für SQL-Tabelle auf Startpanel wird gesetzt
-		query = "Select * From hotel.gast";
+		query = "Select * From gast";
 		
 		//Tabelle für bebuchbare Gäste wird erstellt (query, s.o.), Koordinaten gesetzt und zugeordnet
 		sucheGast = new JTableview(query);

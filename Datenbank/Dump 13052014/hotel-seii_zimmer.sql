@@ -1,10 +1,10 @@
-CREATE DATABASE  IF NOT EXISTS `hotel` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `hotel`;
+CREATE DATABASE  IF NOT EXISTS `hotel-seii` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `hotel-seii`;
 -- MySQL dump 10.13  Distrib 5.6.13, for Win32 (x86)
 --
--- Host: 127.0.0.1    Database: hotel
+-- Host: localhost    Database: hotel-seii
 -- ------------------------------------------------------
--- Server version	5.6.15
+-- Server version	5.6.17
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -18,35 +18,28 @@ USE `hotel`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `gast`
+-- Table structure for table `zimmer`
 --
 
-DROP TABLE IF EXISTS `gast`;
+DROP TABLE IF EXISTS `zimmer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `gast` (
-  `GID` int(11) NOT NULL AUTO_INCREMENT,
-  `Vorname` varchar(45) NOT NULL,
-  `Name` varchar(45) NOT NULL,
-  `Strasse` varchar(45) NOT NULL,
-  `Hausnummer` varchar(45) NOT NULL,
-  `Postleitzahl` int(11) NOT NULL,
-  `Ort` varchar(45) NOT NULL,
-  `Land` varchar(45) NOT NULL,
-  `Geburtstag` date NOT NULL,
-  `Telefonnummer` varchar(45) NOT NULL,
-  PRIMARY KEY (`GID`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
+CREATE TABLE `zimmer` (
+  `ZID` varchar(10) NOT NULL,
+  `Typ` varchar(12) NOT NULL,
+  `Preis` double NOT NULL,
+  PRIMARY KEY (`ZID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `gast`
+-- Dumping data for table `zimmer`
 --
 
-LOCK TABLES `gast` WRITE;
-/*!40000 ALTER TABLE `gast` DISABLE KEYS */;
-INSERT INTO `gast` VALUES (47,'Simon','Kurz','Neue Straße','8',83346,'Bergen','Deutschland','1991-05-07','+49 (0) 8662 3238'),(53,'Wilhelm','Laschinger','Kirchweg','8',83346,'Bergen','Deutschland','1991-06-13','+49 (0) 8662 8301');
-/*!40000 ALTER TABLE `gast` ENABLE KEYS */;
+LOCK TABLES `zimmer` WRITE;
+/*!40000 ALTER TABLE `zimmer` DISABLE KEYS */;
+INSERT INTO `zimmer` VALUES ('1.001','Einzelzimmer',80),('1.002','Doppelzimmer',100),('1.004','Einzelzimmer',80),('2.010','Doppelzimmer',110),('2.011','Doppelzimmer',110),('2.012','Doppelzimmer',110),('2.013','Doppelzimmer',110);
+/*!40000 ALTER TABLE `zimmer` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -58,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-02-03 17:52:09
+-- Dump completed on 2014-05-13 22:59:04

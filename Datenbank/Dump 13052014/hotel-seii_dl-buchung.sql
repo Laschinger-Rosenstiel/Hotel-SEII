@@ -1,10 +1,10 @@
-CREATE DATABASE  IF NOT EXISTS `hotel` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `hotel`;
+CREATE DATABASE  IF NOT EXISTS `hotel-seii` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `hotel-seii`;
 -- MySQL dump 10.13  Distrib 5.6.13, for Win32 (x86)
 --
--- Host: 127.0.0.1    Database: hotel
+-- Host: localhost    Database: hotel-seii
 -- ------------------------------------------------------
--- Server version	5.6.15
+-- Server version	5.6.17
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -18,34 +18,33 @@ USE `hotel`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `zimmer-buchung`
+-- Table structure for table `dl-buchung`
 --
 
-DROP TABLE IF EXISTS `zimmer-buchung`;
+DROP TABLE IF EXISTS `dl-buchung`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `zimmer-buchung` (
-  `ZBID` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `dl-buchung` (
+  `DLBID` int(11) NOT NULL AUTO_INCREMENT,
+  `DID` int(11) NOT NULL,
   `BID` int(11) NOT NULL,
-  `ZID` varchar(10) NOT NULL,
-  `Von` date NOT NULL,
-  `Bis` date NOT NULL,
-  PRIMARY KEY (`ZBID`),
-  KEY `Buchung_idx` (`BID`),
-  KEY `Zimmer_idx` (`ZID`),
-  CONSTRAINT `BID` FOREIGN KEY (`BID`) REFERENCES `buchung` (`BID`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `Zimmer` FOREIGN KEY (`ZID`) REFERENCES `zimmer` (`ZID`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8;
+  `Datum` date NOT NULL,
+  PRIMARY KEY (`DLBID`),
+  KEY `Dienstleistung_idx` (`DID`),
+  KEY `BID_idx` (`BID`),
+  CONSTRAINT `Buchung` FOREIGN KEY (`BID`) REFERENCES `buchung` (`BID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `Dienstleistung` FOREIGN KEY (`DID`) REFERENCES `dienstleistung` (`DID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `zimmer-buchung`
+-- Dumping data for table `dl-buchung`
 --
 
-LOCK TABLES `zimmer-buchung` WRITE;
-/*!40000 ALTER TABLE `zimmer-buchung` DISABLE KEYS */;
-INSERT INTO `zimmer-buchung` VALUES (48,59,'1.004','2014-01-28','2014-01-31'),(49,60,'1.001','2014-02-04','2014-02-09'),(50,61,'1.001','2014-02-20','2014-02-28'),(51,62,'1.002','2014-02-12','2014-02-27'),(52,63,'2.010','2014-02-08','2014-02-28');
-/*!40000 ALTER TABLE `zimmer-buchung` ENABLE KEYS */;
+LOCK TABLES `dl-buchung` WRITE;
+/*!40000 ALTER TABLE `dl-buchung` DISABLE KEYS */;
+INSERT INTO `dl-buchung` VALUES (18,2,60,'2014-02-26'),(19,1,64,'2014-05-16');
+/*!40000 ALTER TABLE `dl-buchung` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -57,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-02-03 17:52:08
+-- Dump completed on 2014-05-13 22:59:04

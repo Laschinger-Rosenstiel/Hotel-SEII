@@ -54,7 +54,7 @@ public class CancelZimmer extends GUIHelp{
 		buttonCancelZimmer.setActionCommand("CancelZimmer?");
 		
 		//Query für SQL-Tabelle in Startpanel wird gesetzt
-		query = "select hotel.gast.GID, hotel.gast.Vorname, hotel.gast.Name, hotel.gast.Geburtstag, hotel.buchung.BID, hotel.`zimmer-buchung`.ZID, hotel.`zimmer-buchung`.Von, hotel.`zimmer-buchung`.Bis from hotel.gast, hotel.buchung, hotel.`zimmer-buchung`	where hotel.gast.GID = hotel.buchung.GID and hotel.buchung.BID = hotel.`zimmer-buchung`.BID and hotel.`zimmer-buchung`.Von > '"+getSQLDate(new Date())+"'";
+		query = "select gast.GID, gast.Vorname, gast.Name, gast.Geburtstag, buchung.BID, `zimmer-buchung`.ZID, `zimmer-buchung`.Von, `zimmer-buchung`.Bis from gast, buchung, `zimmer-buchung`	where gast.GID = buchung.GID and buchung.BID = `zimmer-buchung`.BID and `zimmer-buchung`.Von > '"+getSQLDate(new Date())+"'";
 		
 		//Koordinaten und Größe der GUI-Objekte wird gesetzt und zu contentpane hinzugefügt
 		labelCancelZimmer.setBounds(x_column1, y_line1, 200, y_height);

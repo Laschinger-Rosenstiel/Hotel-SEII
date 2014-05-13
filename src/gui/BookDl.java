@@ -76,7 +76,7 @@ public class BookDl extends GUIHelp{
 		Sql.format(past.getTime());
 		
 		//Query für Tabelle auf dem Startpanel
-		query = "SELECT hotel.gast.GID, hotel.gast.Vorname, hotel.gast.Name, hotel.gast.Geburtstag, hotel.buchung.BID, hotel.`zimmer-buchung`.ZID, hotel.`zimmer-buchung`.Von, hotel.`zimmer-buchung`.Bis from hotel.gast, hotel.buchung, hotel.`zimmer-buchung` where hotel.gast.GID = hotel.buchung.GID AND hotel.buchung.BID = hotel.`zimmer-buchung`.BID AND hotel.`zimmer-buchung`.Bis >= '"+getSQLDate(new Date())+"'";
+		query = "SELECT gast.GID, gast.Vorname, gast.Name, gast.Geburtstag, buchung.BID, `zimmer-buchung`.ZID, `zimmer-buchung`.Von, `zimmer-buchung`.Bis from gast, buchung, `zimmer-buchung` where gast.GID = buchung.GID AND buchung.BID = `zimmer-buchung`.BID AND `zimmer-buchung`.Bis >= '"+getSQLDate(new Date())+"'";
 
 		//ActionListener und ActionCommand für Buttons werden gesetzt
 		buttonSearch.addActionListener(new BHBook(this));

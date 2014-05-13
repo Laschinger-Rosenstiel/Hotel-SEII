@@ -132,7 +132,7 @@ public class BHHelp {
 		try {
 			String sDbDriver=null, sDbUrl=null, sUsr="", sPwd=""; 
 			sDbDriver = "com.mysql.jdbc.Driver"; 
-			sDbUrl = "jdbc:mysql://localhost:3306/Hotel";
+			sDbUrl = "jdbc:mysql://localhost:3306/hotel-seII";
 			sUsr = "root";  
 			sPwd = "init"; 
 			Class.forName( sDbDriver ); 
@@ -166,7 +166,7 @@ public class BHHelp {
 		{ 
 			String sDbDriver=null, sDbUrl=null, sUsr="", sPwd=""; 
 			sDbDriver = "com.mysql.jdbc.Driver"; 
-			sDbUrl = "jdbc:mysql://localhost:3306/Hotel"; 
+			sDbUrl = "jdbc:mysql://localhost:3306/hotel-seII"; 
 			sUsr = "root"; 
 			sPwd = "init"; 
 			Class.forName( sDbDriver ); 
@@ -214,7 +214,7 @@ public class BHHelp {
 		{ 
 			String sDbDriver=null, sDbUrl=null, sUsr="", sPwd=""; 
 			sDbDriver = "com.mysql.jdbc.Driver"; 
-			sDbUrl = "jdbc:mysql://localhost:3306/Hotel"; 
+			sDbUrl = "jdbc:mysql://localhost:3306/hotel-seII"; 
 			sUsr = "root"; 
 			sPwd = "init"; 
 

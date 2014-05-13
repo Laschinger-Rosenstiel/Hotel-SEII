@@ -139,7 +139,7 @@ public class BHBook extends BHHelp implements ActionListener{
 			String bisSql = getSQLDate(bis);
 
 			//SQL Tabelle mit verfügbaren Zimmern wird erzeugt und zum Panel hinzugefügt
-			guiZimmer.availableZimmer = new JTableview("SELECT * from hotel.zimmer where hotel.zimmer.ZID not in (SELECT hotel.`zimmer-buchung`.ZID from hotel.`zimmer-buchung` where (Von between '"+vonSql+"' AND '"+bisSql+"') OR (Bis between '"+vonSql+"' AND '"+bisSql+"'))");
+			guiZimmer.availableZimmer = new JTableview("SELECT * from zimmer where zimmer.ZID not in (SELECT `zimmer-buchung`.ZID from `zimmer-buchung` where (Von between '"+vonSql+"' AND '"+bisSql+"') OR (Bis between '"+vonSql+"' AND '"+bisSql+"'))");
 			JTable available = guiZimmer.availableZimmer.getSQLTable();
 
 			guiZimmer.scrollPaneZimmer = new JScrollPane(available);
@@ -442,7 +442,7 @@ public class BHBook extends BHHelp implements ActionListener{
 				nameSuche = guiZimmer.getNameSuche() +"%";
 
 			//Query für Suche
-			String query = "Select * from hotel.gast where GID like '"+ gidSuche +"' AND Vorname like '"+vorSuche +
+			String query = "Select * from gast where GID like '"+ gidSuche +"' AND Vorname like '"+vorSuche +
 					"' AND Name like '" + nameSuche +"' AND Geburtstag like '" + gebSuche+"'";
 
 			//SQL-Tabelle wird erzeugt und zu contentpane hinzugefügt
@@ -486,7 +486,7 @@ public class BHBook extends BHHelp implements ActionListener{
 				nameSuche = guiDl.getNameSuche() +"%";
 
 			//Query für Suche
-			String query = guiDl.getQuery() + " AND hotel.gast.GID like '"+gidSuche+"' AND hotel.gast.Vorname like '"+vorSuche+ "' AND hotel.gast.Name like'"+ nameSuche+"' AND hotel.gast.Geburtstag like '"+gebSuche+"'";
+			String query = guiDl.getQuery() + " AND gast.GID like '"+gidSuche+"' AND gast.Vorname like '"+vorSuche+ "' AND gast.Name like'"+ nameSuche+"' AND gast.Geburtstag like '"+gebSuche+"'";
 
 			//SQL-Tabelle wird erzeugt und zu contentpane hinzugefügt
 			guiDl.sucheGast = new JTableview(query);

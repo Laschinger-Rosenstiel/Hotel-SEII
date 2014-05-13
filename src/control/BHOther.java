@@ -45,7 +45,7 @@ public class BHOther extends BHHelp implements ActionListener{
 			String bisSql = getSQLDate(bis);
 			
 			//SQL-Tabelle wird erzeugt und zu Startpanel hinzugefügt
-			guiZimmer.checkedZimmer = new JTableview("SELECT * from hotel.zimmer where hotel.zimmer.ZID not in (SELECT hotel.`zimmer-buchung`.ZID from hotel.`zimmer-buchung` where (Von between '"+vonSql+"' AND '"+bisSql+"') OR (Bis between '"+vonSql+"' AND '"+bisSql+"'))");
+			guiZimmer.checkedZimmer = new JTableview("SELECT * from zimmer where zimmer.ZID not in (SELECT `zimmer-buchung`.ZID from `zimmer-buchung` where (Von between '"+vonSql+"' AND '"+bisSql+"') OR (Bis between '"+vonSql+"' AND '"+bisSql+"'))");
 			JTable available = guiZimmer.checkedZimmer.getSQLTable();
 			
 			guiZimmer.scrollPaneChecked = new JScrollPane(available);
@@ -91,7 +91,7 @@ public class BHOther extends BHHelp implements ActionListener{
 			if (!guiPreis.getNameSuche().equals(""))
 				nameSuche = guiPreis.getNameSuche() +"%";
 		
-			String query = guiPreis.getQuery() + " AND hotel.gast.GID like '" + gidSuche + "' AND hotel.gast.Name like '" + nameSuche + "' AND hotel.gast.Vorname like '" + vorSuche + "' AND hotel.gast.Geburtstag like '"+gebSuche+"'";
+			String query = guiPreis.getQuery() + " AND gast.GID like '" + gidSuche + "' AND gast.Name like '" + nameSuche + "' AND gast.Vorname like '" + vorSuche + "' AND gast.Geburtstag like '"+gebSuche+"'";
 			System.out.println(query);
 			guiPreis.searchBu = new JTableview(query);
 			
