@@ -4,11 +4,14 @@ import gui.DataDienst;
 import gui.DataGast;
 import gui.DataZimmer;
 import gui.StartFrame;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -121,7 +124,9 @@ public class ButtonHandlerData extends BHHelp implements ActionListener
 					//Im Anschluss wird vom Gast-Objekt die updateGast Methode ausgeführt.
 					Gast gast = new Gast(dg.id,dg.jtfVn2.getText(), dg.jtfName2.getText(), dg.jtfStr.getText(), dg.jtfHnr.getText(),dg.jtfPlz.getText(),
 							dg.jtfOrt.getText(), dg.jtfLand.getText(), dg.jtfTel.getText(), Geb);
-					gast.updateGast();
+					Connection con = openDbConnection();
+					gast.updateGast(con);
+					commitDbConnection(con);
 					// Tabelle wird aktuallisiert
 					dg.changeFrameG.dispose();
 					dg.jtvGast = new JTableview("Select * From gast");
@@ -161,7 +166,9 @@ public class ButtonHandlerData extends BHHelp implements ActionListener
 						int i = Integer.parseInt(id);
 						//Gast-Objekt wird erzeugt und die ausgewählte Gast-ID mit übergeben... im Anschluss wird deleteGast ausgeführt.
 						Gast g = new Gast(i);
-						g.deleteGast(); 
+						Connection con = openDbConnection();
+						g.deleteGast(con);
+						commitDbConnection(con);
 						//Erneute Tabellenabfrage und aktuallisieren des Panels
 						dg.jtvGast = new JTableview("Select * From gast");
 						JTable gast = dg.jtvGast.getSQLTable();

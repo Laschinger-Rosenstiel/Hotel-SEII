@@ -44,9 +44,9 @@ public class BookZimmer extends GUIHelp{
 	public JTextField labelTel3;
 	private JTextField labelGeb3;
 	public JTextField labelVor3_2, labelName3_2, labelStr3_2, labelPlz3_2, labelOrt3_2, labelLand3_2, labelTel3_2, labelGeb3_2;
-	private JButton checkAvailability, back, bookZimmer;
+	private JButton checkAvailability, back, bookZimmer, next, cancel, next2;
 	public JDateChooser pickerVon, pickerBis;
-	public JTableview availableZimmer;
+	public JTableview availableZimmer, bookedZimmer;
 	public JScrollPane scrollPaneZimmer;
 
 	//Objekte für 3. Card des JFrame werden erstellt
@@ -55,7 +55,7 @@ public class BookZimmer extends GUIHelp{
 	public JTableview showDl;
 	public JScrollPane scrollPaneShow;
 	public JDateChooser bookDateDl;
-	private JButton bookDl, cancelDl;
+	private JButton bookDl, cancelDl, cancelAll2;
 	
 	//
 	public JPanel launchStartPanel() {
@@ -240,7 +240,7 @@ public class BookZimmer extends GUIHelp{
 		//Frame wird visible gesetzt, größe angepasst und Close-Option gesetzt
 		jf.setVisible(true);
 		jf.setResizable(true);
-		jf.setSize(600,500);
+		jf.setSize(700,500);
 		jf.setLocation(300,50);
 		jf.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
@@ -281,16 +281,22 @@ public class BookZimmer extends GUIHelp{
 		
 		checkAvailability = new JButton("Verügbare Zimmer anzeigen...");
 		bookZimmer = new JButton("Zimmer buchen");
+		next = new JButton("Weiter...");
 		back = new JButton("Zurück");
+		cancel = new JButton("Abbrechen");
 		
 		
 		//ActionListener und ActionCommand für Buttons werden gesetzt
 		checkAvailability.setActionCommand("Available?");
 		checkAvailability.addActionListener(new BHBook(this));
-		bookZimmer.setActionCommand("BOOK?");
+		bookZimmer.setActionCommand("BOOK ZIMMER");
 		bookZimmer.addActionListener(new BHBook(this));
 		back.setActionCommand("BACK");
 		back.addActionListener(new BHBook(this));
+		next.setActionCommand("NEXT2");
+		next.addActionListener(new BHBook(this));
+		cancel.setActionCommand("CANCEL");
+		cancel.addActionListener(new BHBook(this));
 		
 		//Datumsraum für JDateChooser werden gesetzt
 		pickerVon.setSelectableDateRange(new Date(), null);
@@ -367,6 +373,12 @@ public class BookZimmer extends GUIHelp{
 		contentpane3.add(bookZimmer);
 		back.setBounds(x_column1, y_line10, x_width, y_height);
 		contentpane3.add(back);
+		cancel.setBounds(x_column1, y_line10, x_width, y_height);
+		contentpane3.add(cancel);
+		cancel.setEnabled(false);
+		cancel.setVisible(false);
+		next.setBounds(x_column3, y_line10, x_width, y_height);
+		contentpane3.add(next);
 		
 		//Hintergrundfarbe wird gesetzt
 		contentpane3.setOpaque(true);
@@ -392,6 +404,7 @@ public class BookZimmer extends GUIHelp{
 		scrollPaneShow = new JScrollPane(show);
 		bookDl = new JButton("Buchen");
 		cancelDl=new JButton("Dienstleistungsbuchung beenden");
+		cancelAll2=new JButton("Abbrechen");
 		bookDateDl = new JDateChooser();
 		
 		//Datumsrauf für JDateChooser wird gesetzt
@@ -402,6 +415,8 @@ public class BookZimmer extends GUIHelp{
 		bookDl.setActionCommand("Dl hinzufügen");
 		cancelDl.addActionListener(new BHBook(this));
 		cancelDl.setActionCommand("Dl cancel");
+		cancelAll2.addActionListener(new BHBook(this));
+		cancelAll2.setActionCommand("cancel All");
 		
 		//Koordinaten, Größe wird gesetzt und Objekte zu contentpane hinzugefügt
 		labelDl.setBounds(x_column1, y_line1, x_width, y_height);
@@ -416,6 +431,8 @@ public class BookZimmer extends GUIHelp{
 		contentpane4.add(bookDl);
 		cancelDl.setBounds(x_column1, y_line8, 250, y_height);
 		contentpane4.add(cancelDl);
+		cancelAll2.setBounds(x_column6, y_line8, x_width, y_height);
+		contentpane4.add(cancelAll2);
 		
 		//Hintergrundfarbe
 		contentpane4.setOpaque(true);
@@ -506,5 +523,13 @@ public class BookZimmer extends GUIHelp{
 		return pickerBis.getDate();
 	}
 	
+	public void disableBackButton() {
+		back.setVisible(false);
+	}
+	
+	public void addCancelButton() {
+		cancel.setEnabled(true);
+		cancel.setVisible(true);
+	}
 	
 }

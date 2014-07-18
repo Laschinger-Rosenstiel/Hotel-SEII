@@ -18,13 +18,18 @@ public class JTableview extends JTable
 	// 2. create JTable view based on a generic SQL query 
 	public JTableview(String SQLquery) 
 	{ 
-		SQLTable = genSQLTable(SQLquery); 
+		SQLTable = genSQLTable(SQLquery, null); 
 	} 
 
+	public JTableview(String SQLquery, Connection cn){
+		SQLTable = genSQLTable(SQLquery, cn);
+	}
+	
 	// update JTable view with new generic SQL query 
-	public void updateTable(String SQLquery) 
+	public void updateTable(String SQLquery, Connection con) 
 	{ 
-		SQLTable = genSQLTable(SQLquery); 
+		SQLTable = genSQLTable(SQLquery, con); 
+		
 	}  
 	// 4.1 return JTable view 
 	public JTable getSQLTable() 
@@ -33,13 +38,17 @@ public class JTableview extends JTable
 	} 
 
 	
-	private JTable genSQLTable(String SQLquery) 
+	private JTable genSQLTable(String SQLquery, Connection cn) 
 	{ 
 		
 		int columnCount = 0; 
 		int cnt = 1; 
-		
+		boolean withConnection = true;
+		if (cn == null){
+			withConnection = false;
+		}
 		JTable tableview = new JTable(); 
+		tableview.getTableHeader().setReorderingAllowed(false) ;
 		tableview.enableInputMethods(false); 
 		tableview.setDragEnabled(false); 
 		tableview.setColumnSelectionAllowed(false); 
@@ -72,7 +81,10 @@ public class JTableview extends JTable
 		{ 
 			
 			Class.forName( sDbDriver ); 
-			Connection cn = DriverManager.getConnection( sDbUrl, sUsr, sPwd ); 
+			
+			if (withConnection == false){
+				cn = DriverManager.getConnection( sDbUrl, sUsr, sPwd );
+			}
 			Statement st = cn.createStatement(); 
 			
 			ResultSet rs = st.executeQuery(SQLquery); 
@@ -100,6 +112,9 @@ public class JTableview extends JTable
 				} 
 				model.addRow(objects); 
 			} 
+			if (withConnection == false){
+				cn.close();
+			}
 		} 
 
 		catch( ClassNotFoundException ex ) 

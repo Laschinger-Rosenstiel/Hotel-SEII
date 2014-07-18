@@ -1,5 +1,7 @@
 package model;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -26,17 +28,14 @@ public class Buchung extends ModelHelp{
 		this.bid = bid;
 	}
 	
-	//Zimmerbuchung
-	public void bookZimmer(Date von, Date bis){
-		//für existierende Gäste wird AI Feld mit ausgelesen
-		if (!gast.isExisting()){
-			int GID = writeDbAi("INSERT INTO gast (Vorname, Name, Strasse, Hausnummer, Postleitzahl, Ort, Land, Telefonnummer, Geburtstag) " + "VALUES('"+ gast.getVorname() + 
-					"', '"+ gast.getName() +"', '"+ gast.getStrasse() +"', '"+ gast.getHn()+"', "+ gast.getPlz()+", '"
-					+gast.getOrt()+"', '"+ gast.getLand() +"', '"+ gast.getTel()+"', '"+ getSQLDate(gast.getGeb())+"')"); 
-			
-			gast.setGid(GID);
-		}
-		
+	/**Zimmerbuchung
+	 * 
+	 * @param von
+	 * @param bis
+	 * @throws SQLException 
+	 */
+	public void bookZimmer(Date von, Date bis, Connection con) throws SQLException{
+	
 		
 		Calendar Von = new GregorianCalendar();
 		Calendar Bis = new GregorianCalendar();
@@ -51,38 +50,40 @@ public class Buchung extends ModelHelp{
 		//Preis wird berechnet
 		String preis = selectDB("select Preis from zimmer where ZID = '"+ zimmer.getZid()+"'");
 		//Gesamtpreis wird berechnet und gesetzt
-		this.bid = writeDbAi("INSERT INTO buchung (GID, Erfassungsdatum, Gesamtpreis) VALUES("+gast.getGid()+", '" + getSQLDate(erfassungsdatum) + "', "+preis+"*"+days+")");
+		System.out.println("vor Insert Buchung");
+		this.bid = writeDbAi("INSERT INTO buchung (GID, Erfassungsdatum, Gesamtpreis) VALUES("+gast.getGid()+", '" + getSQLDate(erfassungsdatum) + "', "+preis+"*"+days+")", con);
 		//hotel-zimmerbuchung wird geschrieben
 		writeDbAi("INSERT INTO `zimmer-buchung` (BID, ZID, Von, Bis) VALUES("+getBid()+", "+zimmer.getZid()+
-		", '" + getSQLDate(von) + "', '" + getSQLDate(bis)+"'  )");
+		", '" + getSQLDate(von) + "', '" + getSQLDate(bis)+"'  )", con);
+		System.out.println("nach Insert Buchung");
 	}
 	
-	public void bookDl(Buchung buchung, Dienstleistung dl) {
+	public void bookDl(Buchung buchung, Dienstleistung dl, Connection con) {
 		
 		//Dl-Buchung
 		String query = "insert into `dl-buchung` (DID, BID, Datum) values ("+dl.getDid()+", "+buchung.getBid()+", '"+getSQLDate(dl.getDate())+"')";
-		int DLBID = writeDbAi(query);
+		int DLBID = writeDbAi(query, con);
 		dlbid = DLBID;
 		//Preis wird verändert
 		String query2 = "update buchung set Gesamtpreis = Gesamtpreis + (select Preis from dienstleistung where DID = '" + dl.getDid() +"')";
-		writeDb(query2);
+		writeDb(query2, con);
 	}
 	
-	public void cancelZimmer(Buchung buchung) {
+	public void cancelZimmer(Buchung buchung, Connection con) {
 		//stornierung Zimmerbuchung
 		this.bid=buchung.getBid();
-		writeDb("delete from `zimmer-buchung` where BID = " + bid);
-		writeDb("delete from buchung where BID = " +bid);
+		writeDb("delete from `zimmer-buchung` where BID = " + bid, con);
+		writeDb("delete from buchung where BID = " +bid, con);
 		
 	}
 	
-	public void cancelDl (Buchung buchung, Dienstleistung dl){
+	public void cancelDl (Buchung buchung, Dienstleistung dl, Connection con){
 		//stornieren Dienstleistung
 		this.bid = buchung.getBid();
 		dlbid = buchung.getDlbid();
 		//Gesamtpreis wird berechnet
-		writeDb("update buchung set Gesamtpreis = Gesamtpreis - (select Preis from dienstleistung where DID = '" + dl.getDid() +"')");
-		writeDb("delete from `dl-buchung` where DLBID = "+dlbid);
+		writeDb("update buchung set Gesamtpreis = Gesamtpreis - (select Preis from dienstleistung where DID = '" + dl.getDid() +"')", con);
+		writeDb("delete from `dl-buchung` where DLBID = "+dlbid, con);
 	}
 	
 	//getter- und setter-Methoden

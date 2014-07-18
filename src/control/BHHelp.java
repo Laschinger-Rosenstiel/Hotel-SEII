@@ -126,44 +126,13 @@ public class BHHelp {
 			throw new GUIException("Falsches Passwort");
 		}	
 	}
-	//Methode um auf DB zu schreiben - gibt AutoIncrement-Feld zurück
-	public int writeDbAi(String SQLquery) {
-
+	
+	/**
+	 * öffnet DB Connection für folgenden Schreibbefehl
+	 * @return
+	 */
+	public Connection openDbConnection(){
 		try {
-			String sDbDriver=null, sDbUrl=null, sUsr="", sPwd=""; 
-			sDbDriver = "com.mysql.jdbc.Driver"; 
-			sDbUrl = "jdbc:mysql://localhost:3306/hotel-seII";
-			sUsr = "root";  
-			sPwd = "init"; 
-			Class.forName( sDbDriver ); 
-			Connection cn = DriverManager.getConnection( sDbUrl, sUsr, sPwd ); 
-
-			PreparedStatement stmt = cn.prepareStatement(SQLquery, 
-					Statement.RETURN_GENERATED_KEYS);
-			
-			stmt.execute();
-			ResultSet res = stmt.getGeneratedKeys();
-			res.next();
-			return res.getInt(1);
-		}
-		catch (SQLException ex) 
-		{ 
-			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
-			return -1;
-		} 
-		catch( ClassNotFoundException ex ) 
-		{ 
-			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
-			return -1;
-		} 
-
-	}
-
-	//Schreibbefehl auf die DB
-	public void writeDb(String SQLquery) 
-	{ 
-		try 
-		{ 
 			String sDbDriver=null, sDbUrl=null, sUsr="", sPwd=""; 
 			sDbDriver = "com.mysql.jdbc.Driver"; 
 			sDbUrl = "jdbc:mysql://localhost:3306/hotel-seII"; 
@@ -171,19 +140,93 @@ public class BHHelp {
 			sPwd = "init"; 
 			Class.forName( sDbDriver ); 
 			Connection cn = DriverManager.getConnection( sDbUrl, sUsr, sPwd ); 
-			Statement st = cn.createStatement(); 
-			st.execute(SQLquery); 
-			st.close(); 
-			cn.close(); 
-		} 
+			cn.setAutoCommit(false);
+			return cn;
+		}
 		catch (SQLException ex) 
 		{ 
 			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+			return null;
 		} 
 		catch( ClassNotFoundException ex ) 
 		{ 
 			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+			return null;
 		} 
+		
+	}
+	
+	public void commitDbConnection(Connection cn){
+		try {
+			cn.commit();
+			cn.close();
+		} catch (SQLException ex) {
+			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+		} 
+	}
+	
+	public void rollbackDbConnection(Connection cn){
+		try {
+			cn.rollback();
+			cn.close();
+		} catch (SQLException ex) {
+			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+		} 
+	}
+	
+	/**schreibt auf DB und gibt Autoinkrement zurück
+	 * 
+	 * @param SQLquery
+	 * @param cn
+	 * @return
+	 */
+	public int writeDbAi(String SQLquery, Connection cn) {
+
+		if (cn != null){
+			try { 
+				PreparedStatement stmt = cn.prepareStatement(SQLquery, 
+						Statement.RETURN_GENERATED_KEYS);
+				stmt.execute();
+				
+				ResultSet res = stmt.getGeneratedKeys();
+				res.next();
+				
+				return res.getInt(1);
+			}
+			catch (SQLException ex) 
+			{ 
+				JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+				return -1;
+			}
+		}
+		else {
+			JOptionPane.showMessageDialog(new JFrame(),"Connection leer"); 
+			return -1;
+		}
+	}
+	/**schreibt auf DB
+	 * 
+	 * @param SQLquery
+	 * @param cn
+	 */
+	public void writeDb(String SQLquery, Connection cn) 
+	{ 
+		if (cn != null) {
+			try 
+			{  	
+				Statement st = cn.createStatement(); 
+				st.execute(SQLquery); 
+				st.close();
+				
+			} 
+			catch (SQLException ex) 
+			{ 
+				JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+			} 
+		}
+		else  {
+			JOptionPane.showMessageDialog(new JFrame(),"Connection leer"); 
+		}
 
 	}
 
@@ -243,11 +286,11 @@ public class BHHelp {
 
 	}
 	//Updaten der SQL-Tabellen
-	public void updateTable(JPanel contentpane, JScrollPane scrollPane, JTableview jtv, String query, int x, int y, int width, int height){
+	public void updateTable(JPanel contentpane, JScrollPane scrollPane, JTableview jtv, String query, int x, int y, int width, int height, Connection con){
 
 		scrollPane.setVisible(false);
 		scrollPane = null;
-		jtv = new JTableview(query);
+		jtv = new JTableview(query, con);
 		JTable table = jtv.getSQLTable();
 		scrollPane = new JScrollPane(table);
 		scrollPane.setBounds(x, y, width, height);

@@ -1,5 +1,6 @@
 package model;
 
+import java.sql.Connection;
 import java.util.Date;
 
 
@@ -52,15 +53,32 @@ public class Gast extends ModelHelp{
 	public Gast(int gid) {
 		this.gid = gid;
 	}
-	//Löscht Gast aus der DB
-	public void deleteGast(){
-		writeDb("delete from gast where GID = " + gid);
+	
+	/**Gast hinzufügen
+	 * 
+	 */
+	public void addGast(Connection con){
+		int GID = writeDbAi("INSERT INTO gast (Vorname, Name, Strasse, Hausnummer, Postleitzahl, Ort, Land, Telefonnummer, Geburtstag) " + "VALUES('"+ getVorname() + 
+				"', '"+ getName() +"', '"+ getStrasse() +"', '"+ getHn()+"', "+ getPlz()+", '"
+				+getOrt()+"', '"+ getLand() +"', '"+ getTel()+"', '"+ getSQLDate(getGeb())+"')", con); 
+		
+		setGid(GID);
 	}
-	//Ändert Gastdaten
-	public void updateGast()
+	
+	/**Löscht Gast aus der DB
+	 * 
+	 */
+	public void deleteGast(Connection con){
+		writeDb("delete from gast where GID = " + gid, con);
+	}
+	
+	/**Ändert Gastdaten
+	 * 
+	 */
+	public void updateGast(Connection con)
 	{
 		writeDb("update gast set Vorname = '" + vorname +"',  Name = '"+ name +"', Strasse = '"+ strasse +"', Hausnummer = '"+ hn +"', Postleitzahl = '"+ plz +"',"
-				+ "Ort = '" + ort +"', Land = '" + land +"', Geburtstag = '" + getSQLDate(geb) +"', Telefonnummer = '" + tel+"' where GID = "+gid);
+				+ "Ort = '" + ort +"', Land = '" + land +"', Geburtstag = '" + getSQLDate(geb) +"', Telefonnummer = '" + tel+"' where GID = "+gid, con);
 	}
 		
 	public String getVorname(){
@@ -150,6 +168,7 @@ public class Gast extends ModelHelp{
 	public void setGid(int gid) {
 		this.gid = gid;
 	}
+
 
 	
 	

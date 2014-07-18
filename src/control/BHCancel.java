@@ -5,6 +5,7 @@ import gui.CancelZimmer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -47,18 +48,21 @@ public class BHCancel extends BHHelp implements ActionListener{
 					String Gid = (String) guiZimmer.sucheBu.getSQLTable().getValueAt(guiZimmer.sucheBu.getSQLTable().getSelectedRow(), 0).toString();
 					int gid = Integer.parseInt(Gid);
 					//wieviele Zimmerbuchungen hat der Gast?
-					int anzahlBuchungen =Integer.parseInt(selectDB("SELECT count(GID) from hotel.buchung where GID = " + gid));
+					int anzahlBuchungen =Integer.parseInt(selectDB("SELECT count(GID) from buchung where GID = " + gid));
+					
+					Connection con = openDbConnection();
 					//wenn nur eine Zimmerbuchung, wird Gast gelöscht und alle seine Buchungen mit
 					if (anzahlBuchungen == 1){
 						Gast gast = new Gast(gid);
-						gast.deleteGast();
+						gast.deleteGast(con);
 					}
 					//sonst nur die Zimmerbuchung
 					else {
 						Buchung buchung = new Buchung(bid);
-						buchung.cancelZimmer(buchung);
+						buchung.cancelZimmer(buchung, con);
 					}
-					updateTable(guiZimmer.contentpane1, guiZimmer.scrollPaneSuche, guiZimmer.sucheBu, guiZimmer.getQuery(), guiZimmer.scrollPaneSuche.getX(), guiZimmer.scrollPaneSuche.getY(), guiZimmer.scrollPaneSuche.getWidth(), guiZimmer.scrollPaneSuche.getHeight());
+					commitDbConnection(con);
+					updateTable(guiZimmer.contentpane1, guiZimmer.scrollPaneSuche, guiZimmer.sucheBu, guiZimmer.getQuery(), guiZimmer.scrollPaneSuche.getX(), guiZimmer.scrollPaneSuche.getY(), guiZimmer.scrollPaneSuche.getWidth(), guiZimmer.scrollPaneSuche.getHeight(), null);
 					
 				}
 				catch (GUIException gex) {
@@ -88,9 +92,11 @@ public class BHCancel extends BHHelp implements ActionListener{
 					Dienstleistung dl = new Dienstleistung(Integer.parseInt(did));
 					Buchung buchung = new Buchung(bid);
 					buchung.setDlbid(dlbid);
+					Connection con = openDbConnection();
 					//stornieren
-					buchung.cancelDl(buchung, dl);
-					updateTable(guiDl.contentpane1, guiDl.scrollPaneSuche, guiDl.sucheBu, guiDl.getQuery(), guiDl.scrollPaneSuche.getX(), guiDl.scrollPaneSuche.getY(), guiDl.scrollPaneSuche.getWidth(), guiDl.scrollPaneSuche.getHeight());
+					buchung.cancelDl(buchung, dl, con);
+					commitDbConnection(con);
+					updateTable(guiDl.contentpane1, guiDl.scrollPaneSuche, guiDl.sucheBu, guiDl.getQuery(), guiDl.scrollPaneSuche.getX(), guiDl.scrollPaneSuche.getY(), guiDl.scrollPaneSuche.getWidth(), guiDl.scrollPaneSuche.getHeight(), null);
 					
 				}
 				catch (GUIException gex) {
@@ -123,7 +129,7 @@ public class BHCancel extends BHHelp implements ActionListener{
 				nameSuche = guiZimmer.getNameSuche() +"%";
 			
 			//Query für Suche
-			String query = guiZimmer.getQuery() + " AND hotel.gast.GID like '" + gidSuche + "' AND hotel.gast.Name like '" + nameSuche + "' AND hotel.gast.Vorname like '" + vorSuche + "' AND hotel.gast.Geburtstag like '"+gebSuche+"'";
+			String query = guiZimmer.getQuery() + " AND gast.GID like '" + gidSuche + "' AND gast.Name like '" + nameSuche + "' AND gast.Vorname like '" + vorSuche + "' AND gast.Geburtstag like '"+gebSuche+"'";
 			System.out.println(query);
 			guiZimmer.sucheBu = new JTableview(query);
 			//SQL-Tabelle wird erzeugt und zu contentpane hinzugefügt
@@ -163,7 +169,7 @@ public class BHCancel extends BHHelp implements ActionListener{
 			if (!guiDl.getNameSuche().equals(""))
 				nameSuche = guiDl.getNameSuche() +"%";
 			//Query für Suche
-			String query = guiDl.getQuery() + " AND hotel.gast.GID like '" + gidSuche + "' AND hotel.gast.Name like '" + nameSuche + "' AND hotel.gast.Vorname like '" + vorSuche + "' AND hotel.gast.Geburtstag like '"+gebSuche+"'";
+			String query = guiDl.getQuery() + " AND gast.GID like '" + gidSuche + "' AND gast.Name like '" + nameSuche + "' AND gast.Vorname like '" + vorSuche + "' AND gast.Geburtstag like '"+gebSuche+"'";
 
 			//SQL-Tabelle wird erzeugt und zu contentpane hinzugefügt
 			guiDl.sucheBu = new JTableview(query);

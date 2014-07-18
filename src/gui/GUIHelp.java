@@ -33,6 +33,7 @@ public class GUIHelp {
 	int x_column3 = 150;
 	int x_column4 = 300;
 	int x_column5= 450;
+	int x_column6= 470;
 	//Standardgrößen
 	int x_width = 150;
 	int y_height = 20;

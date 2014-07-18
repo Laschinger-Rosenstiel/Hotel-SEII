@@ -14,15 +14,21 @@ import javax.swing.JOptionPane;
 
 public class ModelHelp {
 	
-	//rechnet date in SQL-Datumsformat
+	/**rechnet date in SQL-Datumsformat
+	 * 
+	 * @param date
+	 * @return
+	 */
 	public String getSQLDate(Date date) {
 		SimpleDateFormat Sql =new SimpleDateFormat("yyyy-MM-dd");
 		return Sql.format(date);
 	}
 
-	//schreibt auf DB und gibt Autoinkrement zurück
-	public int writeDbAi(String SQLquery) {
-
+	/**
+	 * öffnet DB Connection für folgenden Schreibbefehl
+	 * @return
+	 */
+	public Connection openDbConnection(){
 		try {
 			String sDbDriver=null, sDbUrl=null, sUsr="", sPwd=""; 
 			sDbDriver = "com.mysql.jdbc.Driver"; 
@@ -31,54 +37,101 @@ public class ModelHelp {
 			sPwd = "init"; 
 			Class.forName( sDbDriver ); 
 			Connection cn = DriverManager.getConnection( sDbUrl, sUsr, sPwd ); 
-
-			PreparedStatement stmt = cn.prepareStatement(SQLquery, 
-					Statement.RETURN_GENERATED_KEYS);
-			stmt.execute();
-			ResultSet res = stmt.getGeneratedKeys();
-			res.next();
-			return res.getInt(1);
+			cn.setAutoCommit(false);
+			return cn;
 		}
 		catch (SQLException ex) 
 		{ 
 			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
-			return -1;
+			return null;
 		} 
 		catch( ClassNotFoundException ex ) 
 		{ 
 			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
-			return -1;
+			return null;
 		} 
-
+		
 	}
-	//schreibt auf DB
-	public void writeDb(String SQLquery) 
+	
+	public void commitDbConnection(Connection cn){
+		try {
+			cn.commit();
+			cn.close();
+		} catch (SQLException ex) {
+			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+		} 
+	}
+	
+	public void rollbackDbConnection(Connection cn){
+		try {
+			cn.rollback();
+			cn.close();
+		} catch (SQLException ex) {
+			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+		} 
+	}
+	
+	/**schreibt auf DB und gibt Autoinkrement zurück
+	 * 
+	 * @param SQLquery
+	 * @param cn
+	 * @return
+	 */
+	public int writeDbAi(String SQLquery, Connection cn) {
+
+		if (cn != null){
+			try { 
+				PreparedStatement stmt = cn.prepareStatement(SQLquery, 
+						Statement.RETURN_GENERATED_KEYS);
+				stmt.execute();
+				
+				ResultSet res = stmt.getGeneratedKeys();
+				res.next();
+				
+				return res.getInt(1);
+			}
+			catch (SQLException ex) 
+			{ 
+				JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+				return -1;
+			}
+		}
+		else {
+			JOptionPane.showMessageDialog(new JFrame(),"Connection leer"); 
+			return -1;
+		}
+	}
+	/**schreibt auf DB
+	 * 
+	 * @param SQLquery
+	 * @param cn
+	 */
+	public void writeDb(String SQLquery, Connection cn) 
 	{ 
-		try 
-		{ 
-			String sDbDriver=null, sDbUrl=null, sUsr="", sPwd=""; 
-			sDbDriver = "com.mysql.jdbc.Driver"; 
-			sDbUrl = "jdbc:mysql://localhost:3306/hotel-seII"; 
-			sUsr = "root"; 
-			sPwd = "init"; 
-			Class.forName( sDbDriver ); 
-			Connection cn = DriverManager.getConnection( sDbUrl, sUsr, sPwd ); 
-			Statement st = cn.createStatement(); 
-			st.execute(SQLquery); 
-			st.close(); 
-			cn.close(); 
-		} 
-		catch (SQLException ex) 
-		{ 
-			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
-		} 
-		catch( ClassNotFoundException ex ) 
-		{ 
-			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
-		} 
+		if (cn != null) {
+			try 
+			{  	
+				Statement st = cn.createStatement(); 
+				st.execute(SQLquery); 
+				st.close();
+				
+			} 
+			catch (SQLException ex) 
+			{ 
+				JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+			} 
+		}
+		else  {
+			JOptionPane.showMessageDialog(new JFrame(),"Connection leer"); 
+		}
 
 	}
-	//Select Befehl für DB
+	
+	/**Select Befehl für DB
+	 * 
+	 * @param SQLquery
+	 * @return
+	 */
 	public String selectDB(String SQLquery) 
 	{ 
 		try 

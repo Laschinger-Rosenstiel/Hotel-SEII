@@ -1,5 +1,7 @@
 package model;
 
+import java.sql.Connection;
+
 public class Zimmer extends ModelHelp
 {
 
@@ -7,6 +9,7 @@ public class Zimmer extends ModelHelp
 	String typ;
 	double preis;
 	String znr;
+	Connection writeCon;
 	
 	public Zimmer (String zid) {
 		this.zid = zid;
@@ -28,20 +31,20 @@ public class Zimmer extends ModelHelp
 	//Ändert Zimmerdaten
 	public void updateZimmer()
 	{
-		writeDb("update zimmer set ZID = '" + znr +"',  Typ = '"+ typ +"', Preis = '"+ preis+"' where ZID = "+zid);
+		writeDb("update zimmer set ZID = '" + znr +"',  Typ = '"+ typ +"', Preis = '"+ preis+"' where ZID = "+zid, getWriteCon());
 	}
 	//Schreibt neues Zimmer auf die DB
 	public void createZimmer()
 	{
 		writeDb("INSERT INTO zimmer (ZID, Typ, Preis)" + "VALUES('"+ zid + 
-				"', '"+ typ+"', '"+ preis+"')");
+				"', '"+ typ+"', '"+ preis+"')", getWriteCon());
 	}
 	//Löscht Zimmer von der DB
 	public void deleteZimmer()
 	{
 		String query = "DELETE from " + "zimmer" + " WHERE " + 
 				"ZID" + " = '" + zid + "'"; 
-		writeDb(query);
+		writeDb(query, getWriteCon());
 	}
 	
 	public void setZnr(String x)
@@ -53,4 +56,19 @@ public class Zimmer extends ModelHelp
 		return zid;
 	}
 	
+	public Connection getWriteCon(){
+		return writeCon;
+	}
+	
+	public void openWriteCon() {
+		this.writeCon = openDbConnection();;
+	}
+	
+	public void commitWriteCon() {
+		commitDbConnection(getWriteCon());
+	}
+	
+	public void rollbackWriteCon() {
+		rollbackDbConnection(getWriteCon());
+	}
 }
