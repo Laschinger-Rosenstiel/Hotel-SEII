@@ -165,6 +165,14 @@ public class BHHelp {
 		} 
 	}
 	
+	public void closeDbConnection(Connection cn){
+		try {
+			cn.close();
+		} catch (SQLException ex) {
+			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+		} 
+	}
+	
 	public void rollbackDbConnection(Connection cn){
 		try {
 			cn.rollback();
@@ -289,6 +297,7 @@ public class BHHelp {
 	public void updateTable(JPanel contentpane, JScrollPane scrollPane, JTableview jtv, String query, int x, int y, int width, int height, Connection con){
 
 		scrollPane.setVisible(false);
+		contentpane.remove(scrollPane);
 		scrollPane = null;
 		jtv = new JTableview(query, con);
 		JTable table = jtv.getSQLTable();
