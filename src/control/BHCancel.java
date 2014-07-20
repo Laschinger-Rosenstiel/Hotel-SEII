@@ -61,9 +61,9 @@ public class BHCancel extends BHHelp implements ActionListener{
 						Buchung buchung = new Buchung(bid);
 						buchung.cancelZimmer(buchung, con);
 					}
-					commitDbConnection(con);
-					updateTable(guiZimmer.contentpane1, guiZimmer.scrollPaneSuche, guiZimmer.sucheBu, guiZimmer.getQuery(), guiZimmer.scrollPaneSuche.getX(), guiZimmer.scrollPaneSuche.getY(), guiZimmer.scrollPaneSuche.getWidth(), guiZimmer.scrollPaneSuche.getHeight(), null);
 					
+					updateTable(guiZimmer.contentpane1, guiZimmer.scrollPaneSuche, guiZimmer.sucheBu, guiZimmer.getQuery(), guiZimmer.scrollPaneSuche.getX(), guiZimmer.scrollPaneSuche.getY(), guiZimmer.scrollPaneSuche.getWidth(), guiZimmer.scrollPaneSuche.getHeight(), con);
+					commitDbConnection(con);
 				}
 				catch (GUIException gex) {
 					JOptionPane.showMessageDialog(null, gex, "Error",
