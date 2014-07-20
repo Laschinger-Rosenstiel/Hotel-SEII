@@ -1,7 +1,6 @@
 package control;
 
 import java.sql.*; 
-
 import javax.swing.JOptionPane; 
 import javax.swing.JTable; 
 import javax.swing.JFrame; 
@@ -17,25 +16,20 @@ public class JTableview extends JTable
 	private JTable SQLTable = null; 
 
 	// 2. create JTable view based on a generic SQL query 
-	public JTableview(String SQLquery, Connection con) 
+	public JTableview(String SQLquery) 
 	{ 
-		SQLTable = genSQLTable(SQLquery, con); 
+		SQLTable = genSQLTable(SQLquery, null); 
 	} 
-	
-	public JTableview(String SQLquery){
-		Connection con = openDbConnection();
-		SQLTable = genSQLTable(SQLquery, con);
-		closeDbConnection(con);
-	}
-	
-	public void nullifyTable(){
-		SQLTable = null;
-	}
 
+	public JTableview(String SQLquery, Connection cn){
+		SQLTable = genSQLTable(SQLquery, cn);
+	}
+	
 	// update JTable view with new generic SQL query 
 	public void updateTable(String SQLquery, Connection con) 
 	{ 
 		SQLTable = genSQLTable(SQLquery, con); 
+		
 	}  
 	// 4.1 return JTable view 
 	public JTable getSQLTable() 
@@ -49,8 +43,12 @@ public class JTableview extends JTable
 		
 		int columnCount = 0; 
 		int cnt = 1; 
-		
+		boolean withConnection = true;
+		if (cn == null){
+			withConnection = false;
+		}
 		JTable tableview = new JTable(); 
+		tableview.getTableHeader().setReorderingAllowed(false) ;
 		tableview.enableInputMethods(false); 
 		tableview.setDragEnabled(false); 
 		tableview.setColumnSelectionAllowed(false); 
@@ -72,19 +70,21 @@ public class JTableview extends JTable
 	        };
 		
 		
-	/*	String sDbDriver=null, sDbUrl=null, sUsr="", sPwd=""; 
+		String sDbDriver=null, sDbUrl=null, sUsr="", sPwd=""; 
 		
 		sDbDriver = "com.mysql.jdbc.Driver"; 
-		sDbUrl = "jdbc:mysql://localhost:3306/Hotel-SeII"; 
+		sDbUrl = "jdbc:mysql://localhost:3306/hotel-seII"; 
 		sUsr = "root"; 
-		sPwd = "init"; */
+		sPwd = "init"; 
 
 		try 
 		{ 
 			
-			/*Class.forName( sDbDriver ); 
-			Connection cn = DriverManager.getConnection( sDbUrl, sUsr, sPwd ); */
+			Class.forName( sDbDriver ); 
 			
+			if (withConnection == false){
+				cn = DriverManager.getConnection( sDbUrl, sUsr, sPwd );
+			}
 			Statement st = cn.createStatement(); 
 			
 			ResultSet rs = st.executeQuery(SQLquery); 
@@ -112,48 +112,26 @@ public class JTableview extends JTable
 				} 
 				model.addRow(objects); 
 			} 
+			if (withConnection == false){
+				cn.close();
+			}
 		} 
 
+		catch( ClassNotFoundException ex ) 
+		{ 
+			System.out.println( ex.getMessage() ); 
+		} 
 		catch (SQLException e) 
 		{ 
 			JOptionPane.showMessageDialog(new JFrame(),e); 
 		} 
+
+		
 		tableview.setModel(model);
 		return tableview; 
 	} 
 	
-	public Connection openDbConnection(){
-		try {
-			String sDbDriver=null, sDbUrl=null, sUsr="", sPwd=""; 
-			sDbDriver = "com.mysql.jdbc.Driver"; 
-			sDbUrl = "jdbc:mysql://localhost:3306/hotel-seII"; 
-			sUsr = "root"; 
-			sPwd = "init"; 
-			Class.forName( sDbDriver ); 
-			Connection cn = DriverManager.getConnection( sDbUrl, sUsr, sPwd ); 
-			cn.setAutoCommit(false);
-			return cn;
-		}
-		catch (SQLException ex) 
-		{ 
-			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
-			return null;
-		} 
-		catch( ClassNotFoundException ex ) 
-		{ 
-			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
-			return null;
-		} 	
-	}
-	
-	public void closeDbConnection(Connection cn){
-		try {
-			cn.close();
-		} catch (SQLException ex) {
-			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
-		} 
-	}
 
-	
-	
 } 
+
+

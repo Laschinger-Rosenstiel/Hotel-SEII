@@ -28,13 +28,6 @@ public class Buchung extends ModelHelp{
 		this.bid = bid;
 	}
 	
-	
-	public void addBuchung(Connection con){
-		String query = "INSERT INTO buchung (GID, Erfassungsdatum) VALUES("+gast.getGid()+", '" + getSQLDate(erfassungsdatum) + "')";
-		this.bid = writeDbAi(query, con);
-		System.out.println(query);
-	}
-	
 	/**Zimmerbuchung
 	 * 
 	 * @param von
@@ -56,15 +49,13 @@ public class Buchung extends ModelHelp{
 		//Aufenthaltsdauer wurde berechnet
 		//Preis wird berechnet
 		String preis = selectDB("select Preis from zimmer where ZID = '"+ zimmer.getZid()+"'");
-		//hotel-zimmerbuchung wird geschrieben
-		String queryZimmerBooking = "INSERT INTO `zimmer-buchung` (BID, ZID, Von, Bis) VALUES("+getBid()+", "+zimmer.getZid()+
-				", '" + getSQLDate(von) + "', '" + getSQLDate(bis)+"'  )";
-		System.out.println(queryZimmerBooking);
-		writeDbAi(queryZimmerBooking, con);
 		//Gesamtpreis wird berechnet und gesetzt
-		String queryUpdatePreis = "update buchung set Gesamtpreis = Gesamtpreis+"+preis+"*"+days+ " where BID = "+this.bid;
-		writeDb(queryUpdatePreis, con);
-		System.out.println(queryUpdatePreis);		
+		System.out.println("vor Insert Buchung");
+		this.bid = writeDbAi("INSERT INTO buchung (GID, Erfassungsdatum, Gesamtpreis) VALUES("+gast.getGid()+", '" + getSQLDate(erfassungsdatum) + "', "+preis+"*"+days+")", con);
+		//hotel-zimmerbuchung wird geschrieben
+		writeDbAi("INSERT INTO `zimmer-buchung` (BID, ZID, Von, Bis) VALUES("+getBid()+", "+zimmer.getZid()+
+		", '" + getSQLDate(von) + "', '" + getSQLDate(bis)+"'  )", con);
+		System.out.println("nach Insert Buchung");
 	}
 	
 	public void bookDl(Buchung buchung, Dienstleistung dl, Connection con) {
@@ -122,14 +113,6 @@ public class Buchung extends ModelHelp{
 	
 	public Date getBis(){
 		return bis;
-	}
-
-	public Zimmer getZimmer() {
-		return zimmer;
-	}
-
-	public void setZimmer(Zimmer zimmer) {
-		this.zimmer = zimmer;
 	}
 }
 
