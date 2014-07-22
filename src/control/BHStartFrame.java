@@ -9,20 +9,20 @@ import javax.swing.JPanel;
 
 
 
-public class ButtonHandlerStartFrame implements ActionListener 
+public class BHStartFrame implements ActionListener 
 {
 	StartFrame sf;
 	JPanel panel;
 	
 
 
-	public ButtonHandlerStartFrame(StartFrame sf)
+	public BHStartFrame(StartFrame sf)
 	{
 		this.sf = sf;
 
 	}
 
-	public ButtonHandlerStartFrame(JPanel panel)
+	public BHStartFrame(JPanel panel)
 	{
 		this.panel = panel;
 	}

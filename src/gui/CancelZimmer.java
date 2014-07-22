@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.util.Date;
 
 import javax.swing.JButton;
@@ -12,13 +13,13 @@ import javax.swing.JTextField;
 
 import com.toedter.calendar.JDateChooser;
 
-import control.BHCancel;
+import control.BHCancelZimmer;
 import control.JTableview;
 
-public class CancelZimmer extends GUIHelp{
+public class CancelZimmer extends GUIHelp implements InterfaceCancelZimmer{
 	
 		//ButtonHandler wird erzeugt
-		BHCancel ButtonHandler = new BHCancel(this);
+		BHCancelZimmer ButtonHandler = new BHCancelZimmer(this);
 		//GUI-Objekte werden erstellt
 		public JPanel contentpane1;
 		private JButton buttonCancelZimmer, buttonSearch;
@@ -29,6 +30,10 @@ public class CancelZimmer extends GUIHelp{
 		public JTableview sucheBu;
 		private String query;
 		
+	/* (non-Javadoc)
+	 * @see gui.InterfaceCancelZimmer#launchStartPanel()
+	 */
+	@Override
 	public JPanel launchStartPanel(){
 		//contentpane wird erzeugt, Layout auf null gesetzt
 		contentpane1 = new JPanel();
@@ -48,7 +53,7 @@ public class CancelZimmer extends GUIHelp{
 		geb = new JDateChooser();
 		
 		//ActionListener und ActionCommand für Buttons werden gesetzt
-		buttonSearch.addActionListener(new BHCancel(this));
+		buttonSearch.addActionListener(new BHCancelZimmer(this));
 		buttonSearch.setActionCommand("SearchBu");
 		buttonCancelZimmer.addActionListener(ButtonHandler);
 		buttonCancelZimmer.setActionCommand("CancelZimmer?");
@@ -98,23 +103,94 @@ public class CancelZimmer extends GUIHelp{
 	}
 	
 	//getter-Methoden
+	/* (non-Javadoc)
+	 * @see gui.InterfaceCancelZimmer#getGidSuche()
+	 */
+	@Override
 	public String getGidSuche(){
 		return jtfGid.getText();
 	}
 	
+	/* (non-Javadoc)
+	 * @see gui.InterfaceCancelZimmer#getVorSuche()
+	 */
+	@Override
 	public String getVorSuche(){
 		return jtfVor.getText();
 	}
 	
+	/* (non-Javadoc)
+	 * @see gui.InterfaceCancelZimmer#getNameSuche()
+	 */
+	@Override
 	public String getNameSuche(){
 		return jtfName.getText();
 	}
 	
+	/* (non-Javadoc)
+	 * @see gui.InterfaceCancelZimmer#getGebSuche()
+	 */
+	@Override
 	public Date getGebSuche(){
 		return geb.getDate();
 	}
 	
+	/* (non-Javadoc)
+	 * @see gui.InterfaceCancelZimmer#getQuery()
+	 */
+	@Override
 	public String getQuery(){
 		return query;
 	}
+	
+	public JTableview getSuche(){
+		return sucheBu;
+	}
+	
+	
+	
+	public void setScrollPane(JTable table){
+		scrollPaneSuche = new JScrollPane(table);
+	}
+	
+	public void setBoundsScrollPane(int x, int y, int width, int height){
+		scrollPaneSuche.setBounds(x, y, width, height);
+	}
+	
+	@Override
+	public JScrollPane getScrollPane() {
+		return scrollPaneSuche;
+	}
+
+	@Override
+	public void addToContentPane(JScrollPane pane) {
+		contentpane1.add(pane);
+		
+	}
+
+	@Override
+	public void setScrollPaneNull() {
+		scrollPaneSuche = null;
+		
+	}
+
+	@Override
+	public void setScrollPaneVisible(boolean b) {
+		scrollPaneSuche.setVisible(b);
+		
+	}
+
+	@Override
+	public void setSuche(String query) {
+		sucheBu = new JTableview(query);
+		
+	}
+
+	@Override
+	public void setSucheNull() {
+		sucheBu = null;
+		
+	}
+
+	
 }

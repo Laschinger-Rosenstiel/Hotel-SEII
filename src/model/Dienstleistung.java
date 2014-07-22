@@ -45,11 +45,13 @@ public class Dienstleistung extends ModelHelp {
 	public void createDienst()
 	{
 		writeDb("INSERT INTO dienstleistung (Bezeichnung, Preis)" + "VALUES('" + typ + "', '" + preis +"')", getWriteCon());
+		commitDbConnection(getWriteCon());
 	}
 	//Ändern der Dienstleistungsdaten
 	public void updateDienst()
 	{
-		writeDb("update dienstleistung set DID = '" + did +"', Bezeichnung = '" + typ + "',  Preis = '" + preis + "' where DID = "+ dnr, getWriteCon());
+		writeDb("update dienstleistung set Bezeichnung = '" + typ + "',  Preis = '" + preis + "' where DID = "+ getDid(), getWriteCon());
+		commitDbConnection(getWriteCon());
 	}
 	//Löscht Dienstleistung aus der DB
 	public void deleteDienst()
@@ -57,6 +59,7 @@ public class Dienstleistung extends ModelHelp {
 		String query = "DELETE from " + "dienstleistung" + " WHERE " + 
 				"DID" + " = '" + did + "'"; 
 		writeDb(query, getWriteCon()); 
+		commitDbConnection(getWriteCon());
 	}
 	
 	public int getDid(){
@@ -67,19 +70,19 @@ public class Dienstleistung extends ModelHelp {
 		return date;
 	}
 	
+	public void setTyp(String typ){
+		this.typ = typ;
+	}
+	
+	public void setPreis(Double preis){
+		this.preis = preis;
+	}
+	
 	public Connection getWriteCon(){
+		if (writeCon==null){
+			writeCon = openDbConnection();
+		}
 		return writeCon;
 	}
 	
-	public void openWriteCon() {
-		this.writeCon = openDbConnection();;
-	}
-	
-	public void commitWriteCon() {
-		commitDbConnection(getWriteCon());
-	}
-	
-	public void rollbackWriteCon() {
-		rollbackDbConnection(getWriteCon());
-	}
 }

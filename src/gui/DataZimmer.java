@@ -13,8 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import control.ButtonHandlerData;
-import control.ButtonHandlerDataZimmer;
+import control.BHDataZimmer;
 import control.JTableview;
 
 public class DataZimmer extends GUIHelp implements InterfaceDataZimmer 
@@ -22,6 +21,7 @@ public class DataZimmer extends GUIHelp implements InterfaceDataZimmer
 	public JFrame createFrame, changeFrameZ;
 	private JButton bChange,bDel, bCreate, bConfirme,bConfirme2;
 	public JTextField jtfZnr, jtfPreis,jtfZnr2,jtfPreis2; 
+	@SuppressWarnings("rawtypes")
 	public JComboBox cb, cb2;
 	public JLabel l1,l2,l3,l4,lTyp2,lPreis2,lZnr2;
 	public String[] typ ={"Einzelzimmer","Doppelzimmer"};
@@ -33,12 +33,13 @@ public class DataZimmer extends GUIHelp implements InterfaceDataZimmer
 	public JTable abc;
 	private String x;
 	private String zid;
-	ButtonHandlerDataZimmer control;
+	BHDataZimmer control;
 
+	@SuppressWarnings("rawtypes")
 	public DataZimmer()
 	{
 		//ButtonHandler
-		control = new ButtonHandlerDataZimmer(this);
+		control = new BHDataZimmer(this);
 
 		//JPanel
 		//jf = new JFrame();

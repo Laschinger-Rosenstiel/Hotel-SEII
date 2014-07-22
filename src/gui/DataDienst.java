@@ -1,10 +1,8 @@
 package gui;
 
-import java.awt.CardLayout;
 import java.awt.Color;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -12,8 +10,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import control.ButtonHandlerData;
-import control.ButtonHandlerDataDienst;
+import control.BHDataDienst;
 import control.JTableview;
 
 public class DataDienst extends GUIHelp implements InterfaceDataDienst 
@@ -28,12 +25,12 @@ public class DataDienst extends GUIHelp implements InterfaceDataDienst
 	public JPanel panelD3;
 	public JScrollPane scrollPaneD;
 	private int dnr;
-	public ButtonHandlerDataDienst control;
+	public BHDataDienst control;
 
 	public DataDienst()
 	{
 		//ButtonHandler
-		control = new ButtonHandlerDataDienst(this);
+		control = new BHDataDienst(this);
 		
 		//First JPanel
 		bChange = new JButton("Ändern");
@@ -99,6 +96,7 @@ public class DataDienst extends GUIHelp implements InterfaceDataDienst
 	}
 
 	
+	@SuppressWarnings("static-access")
 	public JFrame launchCreateFrame() {
 		createFrameD = null;
 		panelD2 = null;
@@ -135,6 +133,7 @@ public class DataDienst extends GUIHelp implements InterfaceDataDienst
 	}
 
 	
+	@SuppressWarnings("static-access")
 	public JFrame launchChangeFrame() {
 		changeFrameD = null;
 		panelD3 = null;

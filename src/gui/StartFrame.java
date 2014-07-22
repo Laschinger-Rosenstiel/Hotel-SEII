@@ -4,7 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import control.ButtonHandlerStartFrame;
+import control.BHStartFrame;
 
 public class StartFrame extends JFrame
 {
@@ -21,31 +21,31 @@ public class StartFrame extends JFrame
 		sf = new JFrame("BUCHUNGSSYSTEM");
 		jb1 = new JButton("Zimmer");
 		jb1.setActionCommand("Zimmer buchen");
-		jb1.addActionListener(new ButtonHandlerStartFrame(this));
+		jb1.addActionListener(new BHStartFrame(this));
 		jb2 = new JButton("Dienstleistung");
 		jb2.setActionCommand("Dl buchen");
-		jb2.addActionListener(new ButtonHandlerStartFrame(this));
+		jb2.addActionListener(new BHStartFrame(this));
 		jb3 = new JButton("Zimmer");
 		jb3.setActionCommand("Zimmer stornieren");
-		jb3.addActionListener(new ButtonHandlerStartFrame(this));
+		jb3.addActionListener(new BHStartFrame(this));
 		jb4 = new JButton("Dienstleistung");
 		jb4.setActionCommand("Dl stornieren");
-		jb4.addActionListener(new ButtonHandlerStartFrame(this));
+		jb4.addActionListener(new BHStartFrame(this));
 		jb6 = new JButton("Verfügbarkeit");
 		jb6.setActionCommand("Verfügbarkeit prüfen");
-		jb6.addActionListener(new ButtonHandlerStartFrame(this));
+		jb6.addActionListener(new BHStartFrame(this));
 		jb5 = new JButton("Preis");
 		jb5.setActionCommand("Preis berechnen");
-		jb5.addActionListener(new ButtonHandlerStartFrame(this));
+		jb5.addActionListener(new BHStartFrame(this));
 		jb7 = new JButton("Gast");
 		jb7.setActionCommand("Gast anlegen");
-		jb7.addActionListener(new ButtonHandlerStartFrame(this));
+		jb7.addActionListener(new BHStartFrame(this));
 		jb8 = new JButton("Zimmer");
 		jb8.setActionCommand("Zimmer anlegen");
-		jb8.addActionListener(new ButtonHandlerStartFrame(this));
+		jb8.addActionListener(new BHStartFrame(this));
 		jb9 = new JButton("Dienstleistung");
 		jb9.setActionCommand("Dienstleistung anlegen");
-		jb9.addActionListener(new ButtonHandlerStartFrame(this));
+		jb9.addActionListener(new BHStartFrame(this));
 		label1 = new JLabel("Buchen ", JLabel.CENTER);
 		label2 = new JLabel("Stornieren ", JLabel.CENTER);
 		label3 = new JLabel("Weitere ", JLabel.CENTER);

@@ -43,9 +43,10 @@ public class BHOther extends BHHelp implements ActionListener{
 			//umwandeln in SQL-Format
 			String vonSql = getSQLDate(vonC.getTime());
 			String bisSql = getSQLDate(bis);
+			String query="SELECT * from zimmer where zimmer.ZID not in (SELECT zb.ZID from `zimmer-buchung` zb, buchung b  where ((b.Von between '"+vonSql+"' AND '"+bisSql+"') OR (b.Bis between '"+vonSql+"' AND '"+bisSql+"') OR b.Von = '"+vonSql+"') and zb.BID = b.BID)";
 			
 			//SQL-Tabelle wird erzeugt und zu Startpanel hinzugefügt
-			guiZimmer.checkedZimmer = new JTableview("SELECT * from zimmer where zimmer.ZID not in (SELECT `zimmer-buchung`.ZID from `zimmer-buchung` where (Von between '"+vonSql+"' AND '"+bisSql+"') OR (Bis between '"+vonSql+"' AND '"+bisSql+"'))");
+			guiZimmer.checkedZimmer = new JTableview(query);
 			JTable available = guiZimmer.checkedZimmer.getSQLTable();
 			
 			guiZimmer.scrollPaneChecked = new JScrollPane(available);

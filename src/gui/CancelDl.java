@@ -2,23 +2,20 @@ package gui;
 
 import java.awt.Color;
 import java.util.Date;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-
 import com.toedter.calendar.JDateChooser;
-
-import control.BHCancel;
+import control.BHCancelDl;
 import control.JTableview;
 
-public class CancelDl extends GUIHelp{
+public class CancelDl extends GUIHelp {
 		
 		//ButtonHandler wird erzeugt
-		BHCancel ButtonHandler = new BHCancel(this);
+		BHCancelDl ButtonHandler = new BHCancelDl(this);
 		//GUI-Objekte des Startpanel werden erstellt
 		public JPanel contentpane1;
 		private JButton buttonCancelDl, buttonSearch;

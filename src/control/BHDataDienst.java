@@ -1,18 +1,16 @@
 package control;
 
-import gui.DataDienst;
-import gui.InterfaceDataDienst;
 
+import gui.InterfaceDataDienst;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import model.Dienstleistung;
 
-public class ButtonHandlerDataDienst extends BHHelp implements ActionListener {
+public class BHDataDienst extends BHHelp implements ActionListener {
 
 	/*DataInterface dd;
 	DataDienst datadienst;
@@ -26,8 +24,9 @@ public class ButtonHandlerDataDienst extends BHHelp implements ActionListener {
 	}*/
 	
 	InterfaceDataDienst idd;
+	private Dienstleistung dl;
 	
-	public ButtonHandlerDataDienst(InterfaceDataDienst idd){
+	public BHDataDienst(InterfaceDataDienst idd){
 		this.idd = idd;
 	}
 
@@ -36,7 +35,7 @@ public class ButtonHandlerDataDienst extends BHHelp implements ActionListener {
 		System.out.println("Das Ereignis hat den Wert: " + e.getActionCommand());
 
 		if(idd!=null){
-			if(e.getActionCommand().equals(idd.ACTION_CHANGE))
+			if(e.getActionCommand().equals(InterfaceDataDienst.ACTION_CHANGE))
 			{
 				try {
 					//Zeile markiert?
@@ -48,6 +47,7 @@ public class ButtonHandlerDataDienst extends BHHelp implements ActionListener {
 					String typ = (String) idd.getJtvDienst().getSQLTable().getValueAt(idd.getJtvDienst().getSQLTable().getSelectedRow(), 1).toString(); 
 					String preis = (String) idd.getJtvDienst().getSQLTable().getValueAt(idd.getJtvDienst().getSQLTable().getSelectedRow(), 2).toString(); 
 
+					dl = new Dienstleistung(Integer.parseInt(id), typ, Double.parseDouble(preis));
 					idd.launchChangeFrame();
 					idd.setTextTextField(idd.getJtfID2(), id);
 					idd.setTextTextField(idd.getJtfTyp2(), typ);
@@ -60,12 +60,12 @@ public class ButtonHandlerDataDienst extends BHHelp implements ActionListener {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			else if(e.getActionCommand().equals(idd.ACTION_CREATE)){
+			else if(e.getActionCommand().equals(InterfaceDataDienst.ACTION_CREATE)){
 				idd.launchCreateFrame();
 				idd.setTextTextField(idd.getJtfTyp(), "");
 				idd.setTextTextField(idd.getJtfPreis(), "");
 				}
-			else if(e.getActionCommand().equals(idd.ACTION_DELETE))
+			else if(e.getActionCommand().equals(InterfaceDataDienst.ACTION_DELETE))
 			{
 				try{
 					//Zeile markiert?
@@ -90,7 +90,7 @@ public class ButtonHandlerDataDienst extends BHHelp implements ActionListener {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			else if(e.getActionCommand().equals(idd.ACTION_CONFIRM_CREATE))
+			else if(e.getActionCommand().equals(InterfaceDataDienst.ACTION_CONFIRM_CREATE))
 			{
 				try 
 				{
@@ -121,7 +121,7 @@ public class ButtonHandlerDataDienst extends BHHelp implements ActionListener {
 				}
 
 			}
-			else if(e.getActionCommand().equals(idd.ACTION_CONFIRM_CHANGE))
+			else if(e.getActionCommand().equals(InterfaceDataDienst.ACTION_CONFIRM_CHANGE))
 			{
 				System.out.println("1");
 				try 
@@ -134,14 +134,13 @@ public class ButtonHandlerDataDienst extends BHHelp implements ActionListener {
 					if(idd.getJtvDienst().getSQLTable().getSelectedRow()== -1)
 						throw new GUIException("Fehler: Zeile nicht markiert!");
 					//Textfelder auslesen
-					String id = idd.getJtfID2().getText();
 					String typ = idd.getJtfTyp2().getText(); 
 					String preis = idd.getJtfPreis2().getText();
 					double p = Double.parseDouble(preis);
-					int i = Integer.parseInt(id);
 					//Dienstleisung-Objekt erzeugenen und Änderung mit updateDienst auf die DB schreiben
-					Dienstleistung dienst = new Dienstleistung(i, typ, p, idd.getDnr());//!!!!!!!!!!!!!KONTROLLE
-					dienst.updateDienst();
+					dl.setTyp(typ);
+					dl.setPreis(p);
+					dl.updateDienst();
 					//Fenster schließen und Tabelle aktuallisieren
 					idd.getChangeFrameD().dispose();
 					idd.setJtvDienst(new JTableview("Select * From dienstleistung"));

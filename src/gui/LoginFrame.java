@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 //import Control.ButtonHandlerChange;
-import control.ButtonHandlerLogin;
+import control.BHLogin;
 
 
 public class LoginFrame extends GUIHelp 
@@ -32,30 +32,30 @@ public class LoginFrame extends GUIHelp
 		jf = new JFrame("Anmeldung");
 		b1 = new JButton("Anmelden");
 		b1.setActionCommand("Next");
-		b1.addActionListener(new ButtonHandlerLogin(this));
+		b1.addActionListener(new BHLogin(this));
 		b2 = new JButton("Passwort ändern");
 		b2.setActionCommand("Change");
-		b2.addActionListener(new ButtonHandlerLogin(this));		
+		b2.addActionListener(new BHLogin(this));		
 		l1 = new JLabel("Konto", JLabel.CENTER);
 		l2 = new JLabel("Passwort", JLabel.CENTER);
 		jpf = new JPasswordField(40);
-		jpf.addKeyListener(new ButtonHandlerLogin(this));
+		jpf.addKeyListener(new BHLogin(this));
 		cb = new JComboBox(konto);
 		//cb.setSelectedIndex(2);
-		cb.addActionListener(new ButtonHandlerLogin(this));
+		cb.addActionListener(new BHLogin(this));
 
 		//ChangeFrame
 		cf = new JFrame("Passwort ändern");
 		b3 = new JButton("Passwort speichern");
 		b3.setActionCommand("SavePw");
-		b3.addActionListener(new ButtonHandlerLogin(this));
+		b3.addActionListener(new BHLogin(this));
 		b4 = new JButton("Zurück");
 		b4.setActionCommand("BackToLogin");
-		b4.addActionListener(new ButtonHandlerLogin(this));
+		b4.addActionListener(new BHLogin(this));
 		jpf2 = new JPasswordField(40);
 		jpf3 = new JPasswordField(40);
 		jpf4 = new JPasswordField(40);
-		jpf4.addKeyListener(new ButtonHandlerLogin(this));
+		jpf4.addKeyListener(new BHLogin(this));
 		l5 = new JLabel("Altes Passwort", JLabel.CENTER);
 		l3 = new JLabel("Neues Passwort", JLabel.CENTER);
 		l4 = new JLabel("Bestätigen", JLabel.CENTER);

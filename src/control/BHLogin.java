@@ -14,18 +14,18 @@ import javax.swing.JOptionPane;
 
 
 
-public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyListener
+public class BHLogin extends BHHelp implements ActionListener , KeyListener
 {
 	LoginFrame lf;
 	StartFrame sf;
 		
 	String s;
 
-	public ButtonHandlerLogin(LoginFrame x)
+	public BHLogin(LoginFrame x)
 	{
 		lf = x;
 	}
-	public ButtonHandlerLogin(StartFrame x)
+	public BHLogin(StartFrame x)
 	{
 		sf = x;
 	}

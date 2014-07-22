@@ -2,9 +2,7 @@ package gui;
 
 
 
-import java.awt.CardLayout;
 import java.awt.Color;
-import java.sql.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,13 +14,12 @@ import javax.swing.JTextField;
 
 import com.toedter.calendar.JDateChooser;
 
-import control.ButtonHandlerData;
-import control.ButtonHandlerDataGast;
+import control.BHDataGast;
 import control.JTableview;
 
 public class DataGast extends GUIHelp implements InterfaceDataGast  {
 
-	public ButtonHandlerDataGast control;
+	public BHDataGast control;
 
 
 	public JFrame changeFrameG;
@@ -39,7 +36,7 @@ public class DataGast extends GUIHelp implements InterfaceDataGast  {
 	public DataGast()
 	{
 		//ButtonHandler
-		control = new ButtonHandlerDataGast(this);
+		control = new BHDataGast(this);
 		// JPanel
 		bChange = new JButton("Ändern");
 		bChange.setActionCommand(ACTION_CHANGE);
@@ -119,6 +116,7 @@ public class DataGast extends GUIHelp implements InterfaceDataGast  {
 		return panelG1;
 	}
 
+	@SuppressWarnings("static-access")
 	public JFrame launchChangeFrame() {
 		changeFrameG = null;
 		panelG2 = null;

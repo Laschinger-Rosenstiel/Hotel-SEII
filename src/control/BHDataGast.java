@@ -1,6 +1,5 @@
 package control;
 
-import gui.DataGast;
 import gui.InterfaceDataGast;
 
 import java.awt.event.ActionEvent;
@@ -16,7 +15,7 @@ import javax.swing.JTable;
 
 import model.Gast;
 
-public class ButtonHandlerDataGast extends BHHelp implements ActionListener {
+public class BHDataGast extends BHHelp implements ActionListener {
 	
 	/*DataInterface dg;
 	DataGast datagast;
@@ -34,9 +33,10 @@ public class ButtonHandlerDataGast extends BHHelp implements ActionListener {
 		
 	}*/
 	
+	private Gast gast;
 	InterfaceDataGast idg;
 	
-	public ButtonHandlerDataGast(InterfaceDataGast idg){
+	public BHDataGast(InterfaceDataGast idg){
 		this.idg = idg;
 	}
 	
@@ -54,7 +54,7 @@ public class ButtonHandlerDataGast extends BHHelp implements ActionListener {
 					if(idg.getJTableview().getSQLTable().getSelectedRow()== -1)
 						throw new GUIException("Fehler: Zeile nicht markiert!");
 					//liest Werte aus der Datenbank
-				//	String id = (String) idg.getJTableview().getSQLTable().getValueAt(idg.getJTableview().getSQLTable().getSelectedRow(), 0).toString(); 
+					String id = (String) idg.getJTableview().getSQLTable().getValueAt(idg.getJTableview().getSQLTable().getSelectedRow(), 0).toString(); 
 					String vn = (String) idg.getJTableview().getSQLTable().getValueAt(idg.getJTableview().getSQLTable().getSelectedRow(), 1).toString(); 
 					String name = (String) idg.getJTableview().getSQLTable().getValueAt(idg.getJTableview().getSQLTable().getSelectedRow(), 2).toString(); 
 					String str = (String) idg.getJTableview().getSQLTable().getValueAt(idg.getJTableview().getSQLTable().getSelectedRow(), 3).toString(); 
@@ -75,13 +75,24 @@ public class ButtonHandlerDataGast extends BHHelp implements ActionListener {
 					idg.setTextTextField(idg.getJtfPlz(), plz);
 					idg.setTextTextField(idg.getJtfOrt(), ort);
 					idg.setTextTextField(idg.getJtfLand(), land);
-					idg.setTextTextField(idg.getJtfGeb2(), geb);//!!!Datum??
+					
+					
+					
+					Date Geb = new SimpleDateFormat("yyyy-MM-dd").parse(geb);
+					idg.setTextTextField(idg.getJtfGeb2(), getDateSqlToGer(geb));
 					idg.setTextTextField(idg.getJtfTel(), tel);
+					
+					gast = new Gast(id, vn, name, str, hnr, plz, ort, land, tel, Geb);
 
 				} 
 				catch (GUIException e1) 
 				{
 					JOptionPane.showMessageDialog(null, e1, "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				catch (ParseException pex)
+				{
+					JOptionPane.showMessageDialog(null, pex, "Error", 
 							JOptionPane.ERROR_MESSAGE);
 				}
 
@@ -128,11 +139,22 @@ public class ButtonHandlerDataGast extends BHHelp implements ActionListener {
 					checkBirthday(Geb);
 					//Gast-Objekt wird erzeugt hierzu werden die aus den Textfeldern gelesenen Werte an den Gastkonstruktor übergeben
 					//Im Anschluss wird vom Gast-Objekt die updateGast Methode ausgeführt.
-					Gast gast = new Gast(idg.getId(),idg.getJtfVn2().getText(), idg.getJtfName2().getText(), idg.getJtfStr().getText(), idg.getJtfHnr().getText(),idg.getJtfPlz().getText(),
-							idg.getJtfOrt().getText(), idg.getJtfLand().getText(), idg.getJtfTel().getText(), Geb);
+					
+					gast.setVorname(idg.getJtfVn2().getText());
+					gast.setName(idg.getJtfName2().getText());
+					gast.setStrasse(idg.getJtfStr().getText());
+					gast.setHn(idg.getJtfHnr().getText());
+					gast.setPlz(idg.getJtfPlz().getText());
+					gast.setOrt(idg.getJtfOrt().getText());
+					gast.setLand(idg.getJtfLand().getText());
+					gast.setTel(idg.getJtfTel().getText());
+					gast.setGeb(Geb);
+					
+					
 					Connection con = openDbConnection();
 					gast.updateGast(con);
 					commitDbConnection(con);
+					closeDbConnection(con);
 					// Tabelle wird aktuallisiert
 					idg.getChangeFrameG().dispose();
 					idg.setJTableview(new JTableview("Select * From gast")); 
@@ -152,7 +174,7 @@ public class ButtonHandlerDataGast extends BHHelp implements ActionListener {
 				} 
 				catch (ParseException e1) 
 				{
-					JOptionPane.showMessageDialog(null, e1, "Error",
+					JOptionPane.showMessageDialog(null, "Bitte Datum korrekt eingeben: dd.MM.yyyy", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 

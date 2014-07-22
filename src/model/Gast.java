@@ -69,7 +69,7 @@ public class Gast extends ModelHelp{
 	 * 
 	 */
 	public void deleteGast(Connection con){
-		writeDb("delete from gast where GID = " + gid, con);
+		writeDb("delete from gast where GID = " + getGid(), con);
 	}
 	
 	/**Ändert Gastdaten
@@ -77,8 +77,9 @@ public class Gast extends ModelHelp{
 	 */
 	public void updateGast(Connection con)
 	{
-		writeDb("update gast set Vorname = '" + vorname +"',  Name = '"+ name +"', Strasse = '"+ strasse +"', Hausnummer = '"+ hn +"', Postleitzahl = '"+ plz +"',"
-				+ "Ort = '" + ort +"', Land = '" + land +"', Geburtstag = '" + getSQLDate(geb) +"', Telefonnummer = '" + tel+"' where GID = "+gid, con);
+		
+		writeDb("update gast set Vorname = '" + getVorname() +"',  Name = '"+ getName()+"', Strasse = '"+ getStrasse() +"', Hausnummer = '"+ getHn() +"', Postleitzahl = '"+ getPlz() +"',"
+				+ "Ort = '" + getOrt() +"', Land = '" + getLand() +"', Geburtstag = '" + getSQLDate(getGeb()) +"', Telefonnummer = '" + getTel()+"' where GID = "+getGid(), con);
 	}
 		
 	public String getVorname(){

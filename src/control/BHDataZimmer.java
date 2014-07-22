@@ -1,24 +1,17 @@
 package control;
 
-import gui.DataZimmer;
+
 import gui.InterfaceDataZimmer;
-import gui.StartFrame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-
 import model.Zimmer;
 
 
-public class ButtonHandlerDataZimmer extends BHHelp implements ActionListener {
+public class BHDataZimmer extends BHHelp implements ActionListener {
 	
 	/*DataInterface dz;
 	DataZimmer datazimmer;
@@ -33,8 +26,9 @@ public class ButtonHandlerDataZimmer extends BHHelp implements ActionListener {
 	}*/
 	
 	InterfaceDataZimmer idz;
+	private Zimmer zimmer;
 	
-	public ButtonHandlerDataZimmer(InterfaceDataZimmer idz){
+	public BHDataZimmer(InterfaceDataZimmer idz){
 		this.idz = idz;
 	}
 
@@ -43,7 +37,7 @@ public class ButtonHandlerDataZimmer extends BHHelp implements ActionListener {
 		System.out.println("Das Ereignis hat den Wert: " + e.getActionCommand());
 
 		if(idz!=null){
-			if(e.getActionCommand().equals(idz.ACTION_CHANGE))
+			if(e.getActionCommand().equals(InterfaceDataZimmer.ACTION_CHANGE))
 			{
 				try 
 				{
@@ -56,6 +50,8 @@ public class ButtonHandlerDataZimmer extends BHHelp implements ActionListener {
 					String typ = (String) idz.getJtv().getSQLTable().getValueAt(idz.getJtv().getSQLTable().getSelectedRow(), 1).toString(); 
 					String preis = (String) idz.getJtv().getSQLTable().getValueAt(idz.getJtv().getSQLTable().getSelectedRow(), 2).toString(); 
 
+					
+					zimmer = new Zimmer(id, typ, Double.parseDouble(preis));
 					idz.launchChangeFrame();
 					idz.setTextTextField(idz.getJtfPreis2(), preis);
 					idz.setTextTextField(idz.getJtfZnr2(), id);
@@ -66,7 +62,7 @@ public class ButtonHandlerDataZimmer extends BHHelp implements ActionListener {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			else if(e.getActionCommand().equals(idz.ACTION_CREATE))
+			else if(e.getActionCommand().equals(InterfaceDataZimmer.ACTION_CREATE))
 			{
 
 				idz.launchCreateFrame();
@@ -74,7 +70,7 @@ public class ButtonHandlerDataZimmer extends BHHelp implements ActionListener {
 				idz.setTextTextField(idz.getJtfPreis(), "");
 
 			}
-			else if(e.getActionCommand().equals(idz.ACTION_CONFIRM_CREATE))
+			else if(e.getActionCommand().equals(InterfaceDataZimmer.ACTION_CONFIRM_CREATE))
 			{
 				try 
 				{
@@ -107,7 +103,7 @@ public class ButtonHandlerDataZimmer extends BHHelp implements ActionListener {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			else if(e.getActionCommand().equals(idz.ACTION_CONFIRM_CHANGE))
+			else if(e.getActionCommand().equals(InterfaceDataZimmer.ACTION_CONFIRM_CHANGE))
 			{
 				try {
 
@@ -119,9 +115,12 @@ public class ButtonHandlerDataZimmer extends BHHelp implements ActionListener {
 					String preis = idz.getJtfPreis2().getText();
 
 					Double p = Double.parseDouble(preis);
-					System.out.println(id+"__"+ typ+ "__"+ p);
 					//Zimmwe-Objekt wird mit ausgelesenen Werten erzeugt und mit der updateZimmer Methode werden Änderungen auf die Db geschrieben
-					Zimmer zimmer = new Zimmer(id,typ,p,idz.getZid());
+					
+					
+					zimmer.setZnr(id);
+					zimmer.setTyp(typ);
+					zimmer.setPreis(p);
 					zimmer.updateZimmer();
 					//Fenster wird geschlossen und panel aktuallisiert neu gelauncht
 					idz.getChangeFrameZ().dispose();
@@ -139,8 +138,13 @@ public class ButtonHandlerDataZimmer extends BHHelp implements ActionListener {
 					JOptionPane.showMessageDialog(null, e1, "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
+				catch (NumberFormatException nfe)
+				{
+					JOptionPane.showMessageDialog(null, "Bitte Preis korrekt eingeben (Bsp.: 90.00)", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
-			else if(e.getActionCommand().equals(idz.ACTION_DELETE))
+			else if(e.getActionCommand().equals(InterfaceDataZimmer.ACTION_DELETE))
 			{
 				try{
 					if(idz.getJtv().getSQLTable().getSelectedRow()== -1)
