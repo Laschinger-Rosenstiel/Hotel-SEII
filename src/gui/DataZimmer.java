@@ -1,9 +1,7 @@
 package gui;
 
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.ScrollPane;
 
+import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;

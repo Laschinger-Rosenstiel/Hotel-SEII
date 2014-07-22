@@ -1,15 +1,12 @@
 package gui;
 
-import java.awt.Component;
 import java.util.Date;
-
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-
 import control.JTableview;
 
-public interface InterfaceCancelZimmer {
+public interface InterfaceCancel {
 
 	public abstract JPanel launchStartPanel();
 

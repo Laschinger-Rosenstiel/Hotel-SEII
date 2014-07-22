@@ -2,21 +2,19 @@ package control;
 
 
 import gui.CancelDl;
+import gui.InterfaceCancel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
-
 import model.Buchung;
 import model.Dienstleistung;
 
 public class BHCancelDl extends BHHelp implements ActionListener{
 
-	CancelDl guiDl;
+	InterfaceCancel guiDl;
 
 	public BHCancelDl (CancelDl guiDl) {
 		this.guiDl = guiDl;
@@ -32,16 +30,16 @@ public class BHCancelDl extends BHHelp implements ActionListener{
 			if (answer == JOptionPane.YES_OPTION) {
 				try {
 					//Zeile markiert?
-					if (guiDl.sucheBu.getSQLTable().getSelectedRow() == -1) {
+					if (guiDl.getSuche().getSQLTable().getSelectedRow() == -1) {
 						throw new GUIException("Fehler: Zeile nicht markiert!");
 					}		
 					//bid und dlbid werden ausgelesen
-					String Bid = (String) guiDl.sucheBu.getSQLTable().getValueAt(guiDl.sucheBu.getSQLTable().getSelectedRow(), 4).toString();
+					String Bid = (String) guiDl.getSuche().getSQLTable().getValueAt(guiDl.getSuche().getSQLTable().getSelectedRow(), 4).toString();
 					int bid = Integer.parseInt(Bid);
-					String Dlbid = (String) guiDl.sucheBu.getSQLTable().getValueAt(guiDl.sucheBu.getSQLTable().getSelectedRow(), 5).toString();
+					String Dlbid = (String) guiDl.getSuche().getSQLTable().getValueAt(guiDl.getSuche().getSQLTable().getSelectedRow(), 5).toString();
 					int dlbid = Integer.parseInt(Dlbid);
 					//did auslesen
-					String did = (String) guiDl.sucheBu.getSQLTable().getValueAt(guiDl.sucheBu.getSQLTable().getSelectedRow(), 7).toString();
+					String did = (String) guiDl.getSuche().getSQLTable().getValueAt(guiDl.getSuche().getSQLTable().getSelectedRow(), 7).toString();
 					//Dl und Buchungsobjekt erzeugen
 					Dienstleistung dl = new Dienstleistung(Integer.parseInt(did));
 					Buchung buchung = new Buchung(bid);
@@ -52,15 +50,15 @@ public class BHCancelDl extends BHHelp implements ActionListener{
 					commitDbConnection(con);
 					//updateTable(guiDl.contentpane1, guiDl.scrollPaneSuche, guiDl.sucheBu, guiDl.getQuery(), guiDl.scrollPaneSuche.getX(), guiDl.scrollPaneSuche.getY(), guiDl.scrollPaneSuche.getWidth(), guiDl.scrollPaneSuche.getHeight(), null);
 					
-					if (guiDl.scrollPaneSuche != null){
-						guiDl.scrollPaneSuche.setVisible(false);
+					if (guiDl.getScrollPane() != null){
+						guiDl.setScrollPaneVisible(false);
 					}
-					guiDl.sucheBu = null;
-					guiDl.sucheBu = new JTableview(guiDl.getQuery());
-					guiDl.scrollPaneSuche = null;
-					guiDl.scrollPaneSuche = new JScrollPane(guiDl.sucheBu.getSQLTable());
-					guiDl.scrollPaneSuche.setBounds(10, 280, 1000, 200);
-					guiDl.contentpane1.add(guiDl.scrollPaneSuche);
+					guiDl.setSucheNull();
+					guiDl.setSuche(guiDl.getQuery());
+					guiDl.setScrollPaneNull();
+					guiDl.setScrollPane(guiDl.getSuche().getSQLTable());
+					guiDl.setBoundsScrollPane(10, 280, 1000, 200);
+					guiDl.addToContentPane(guiDl.getScrollPane());
 				}
 				catch (GUIException gex) {
 					JOptionPane.showMessageDialog(null, gex, "Error",
@@ -74,7 +72,7 @@ public class BHCancelDl extends BHHelp implements ActionListener{
 			String vorSuche = "%";
 			String nameSuche = "%";
 			String gidSuche = "%";
-			guiDl.sucheBu = null;
+			guiDl.setSucheNull();
 
 			//Exception für falsches Datum wird abgefangen
 			try {
@@ -97,15 +95,16 @@ public class BHCancelDl extends BHHelp implements ActionListener{
 			String query = guiDl.getQuery() + " AND gast.GID like '" + gidSuche + "' AND gast.Name like '" + nameSuche + "' AND gast.Vorname like '" + vorSuche + "' AND gast.Geburtstag like '"+gebSuche+"'";
 
 			//SQL-Tabelle wird erzeugt und zu contentpane hinzugefügt
-			guiDl.sucheBu = new JTableview(query);
+			guiDl.setSuche(query);
 
-			JTable suche = guiDl.sucheBu.getSQLTable();
+			JTable suche = guiDl.getSuche().getSQLTable();
 
-			guiDl.scrollPaneSuche.setVisible(false);
-			guiDl.scrollPaneSuche = null;
-			guiDl.scrollPaneSuche = new JScrollPane(suche);
-			guiDl.scrollPaneSuche.setBounds(10, 280, 1000, 200);
-			guiDl.contentpane1.add(guiDl.scrollPaneSuche);
+			guiDl.setScrollPaneVisible(false);
+			guiDl.setScrollPaneNull();
+			
+			guiDl.setScrollPane(suche);
+			guiDl.setBoundsScrollPane(10, 280, 1000, 200);
+			guiDl.addToContentPane(guiDl.getScrollPane());
 		}
 	}		
 }

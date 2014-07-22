@@ -1,22 +1,18 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.util.Date;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-
 import com.toedter.calendar.JDateChooser;
-
 import control.BHCancelZimmer;
 import control.JTableview;
 
-public class CancelZimmer extends GUIHelp implements InterfaceCancelZimmer{
+public class CancelZimmer extends GUIHelp implements InterfaceCancel{
 	
 		//ButtonHandler wird erzeugt
 		BHCancelZimmer ButtonHandler = new BHCancelZimmer(this);

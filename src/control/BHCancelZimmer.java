@@ -1,7 +1,7 @@
 package control;
 
 
-import gui.InterfaceCancelZimmer;
+import gui.InterfaceCancel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,10 +15,10 @@ import model.Buchung;
 
 public class BHCancelZimmer extends BHHelp implements ActionListener{
 
-	InterfaceCancelZimmer guiZimmer;
+	InterfaceCancel guiZimmer;
 	static Buchung buchung;
 
-	public BHCancelZimmer (InterfaceCancelZimmer guiZimmer) {
+	public BHCancelZimmer (InterfaceCancel guiZimmer) {
 		this.guiZimmer = guiZimmer;
 	}
 

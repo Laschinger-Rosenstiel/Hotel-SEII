@@ -2,17 +2,20 @@ package gui;
 
 import java.awt.Color;
 import java.util.Date;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+
 import com.toedter.calendar.JDateChooser;
+
 import control.BHCancelDl;
 import control.JTableview;
 
-public class CancelDl extends GUIHelp {
+public class CancelDl extends GUIHelp implements InterfaceCancel{
 		
 		//ButtonHandler wird erzeugt
 		BHCancelDl ButtonHandler = new BHCancelDl(this);
@@ -116,6 +119,51 @@ public class CancelDl extends GUIHelp {
 	
 	public String getQuery(){
 		return query;
+	}
+
+	@Override
+	public JTableview getSuche() {
+		return sucheBu;
+	}
+
+	@Override
+	public JScrollPane getScrollPane() {
+		return scrollPaneSuche;
+	}
+
+	@Override
+	public void setScrollPane(JTable table) {
+		scrollPaneSuche = new JScrollPane(table);
+	}
+
+	@Override
+	public void setScrollPaneNull() {
+		scrollPaneSuche = null;
+	}
+
+	@Override
+	public void setScrollPaneVisible(boolean b) {
+		scrollPaneSuche.setVisible(b);
+	}
+
+	@Override
+	public void setBoundsScrollPane(int x, int y, int width, int height) {
+		scrollPaneSuche.setBounds(x, y, width, height);
+	}
+
+	@Override
+	public void addToContentPane(JScrollPane pane) {
+		contentpane1.add(pane);
+	}
+
+	@Override
+	public void setSuche(String query) {
+		sucheBu = new JTableview(query);
+	}
+
+	@Override
+	public void setSucheNull() {
+		sucheBu=null;
 	}
 	
 }
