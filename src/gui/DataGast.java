@@ -17,10 +17,14 @@ import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
 
 import control.ButtonHandlerData;
+import control.ButtonHandlerDataGast;
 import control.JTableview;
 
-public class DataGast extends GUIHelp
-{
+public class DataGast extends GUIHelp implements InterfaceDataGast  {
+
+	public ButtonHandlerDataGast control;
+
+
 	public JFrame changeFrameG;
 	private JButton bChange,bSearch, bDel, bConfirme;
 	public JTextField jtfVn, jtfName,jtfVn2,jtfName2,jtfGeb2,jtfStr,jtfHnr,jtfPlz,jtfOrt,jtfLand,jtfTel;
@@ -30,20 +34,22 @@ public class DataGast extends GUIHelp
 	public JScrollPane scrollPaneG;
 	public String id;
 	public JDateChooser Geb;
-	
-	
+
+
 	public DataGast()
 	{
+		//ButtonHandler
+		control = new ButtonHandlerDataGast(this);
 		// JPanel
 		bChange = new JButton("Ändern");
-		bChange.setActionCommand("ChangeGast");
-		bChange.addActionListener(new ButtonHandlerData(this));
+		bChange.setActionCommand(ACTION_CHANGE);
+		bChange.addActionListener(control);
 		bSearch = new JButton("Suchen");
-		bSearch.setActionCommand("SearchGast");
-		bSearch.addActionListener(new ButtonHandlerData(this));
+		bSearch.setActionCommand(ACTION_SEARCH);
+		bSearch.addActionListener(control);
 		bDel = new JButton("Löschen");
-		bDel.setActionCommand("DeleteGast");
-		bDel.addActionListener(new ButtonHandlerData(this));
+		bDel.setActionCommand(ACTION_DELETE);
+		bDel.addActionListener(control);
 		jtfVn = new JTextField(40);
 		jtfName = new JTextField(40);
 		Geb = new JDateChooser();
@@ -52,12 +58,12 @@ public class DataGast extends GUIHelp
 		lGeb = new JLabel("Geburtsdatum:", JLabel.LEFT);
 		lTitel = new JLabel("Gastsuche:", JLabel.LEFT);
 		jtvGast = new JTableview("Select * From gast");
-		
+
 		//ChangeFrame
 		changeFrameG = new JFrame();
 		bConfirme = new JButton("Bestätigen");
-		bConfirme.setActionCommand("ConfirmeChangeGast");
-		bConfirme.addActionListener(new ButtonHandlerData(this));
+		bConfirme.setActionCommand(ACTION_CONFIRM);
+		bConfirme.addActionListener(control);
 		jtfVn2 = new JTextField(40);
 		jtfName2 = new JTextField(40);
 		jtfGeb2 = new JTextField(40);
@@ -77,9 +83,8 @@ public class DataGast extends GUIHelp
 		lLand = new JLabel("Land:", JLabel.LEFT);
 		lTel = new JLabel("Telefon:", JLabel.LEFT);
 	}
-	
-	public JPanel launchJPanel()
-	{
+
+	public JPanel launchPanel() {
 		//Panel wird erzeugt und befüllt
 		panelG1 = new JPanel();
 		panelG1.setLayout(null);
@@ -110,63 +115,52 @@ public class DataGast extends GUIHelp
 		panelG1.add(bDel);
 		panelG1.setOpaque(true);
 		panelG1.setBackground(new Color(209,218,248));
-		
+
 		return panelG1;
 	}
-	
-	public JFrame launchChangeFrameG(String x,String vn,String name,String str,String hnr,String plz,String ort,String land,String tel,String geb)
-	{
+
+	public JFrame launchChangeFrame() {
 		changeFrameG = null;
 		panelG2 = null;
 		//Panel wird erzeugt und befüllt
 		JPanel panelG2 = new JPanel();
 		panelG2.setLayout(null);
 		panelG2.setVisible(false);
-		id = x;
 		lVn2.setBounds(x_column1, y_line1, x_width, y_height);
 		panelG2.add(lVn2);
 		jtfVn2.setBounds(x_column3, y_line1, x_width, y_height);
-		jtfVn2.setText(vn);
 		panelG2.add(jtfVn2);
 		lName2.setBounds(x_column1, y_line2, x_width, y_height);
 		panelG2.add(lName2);
 		jtfName2.setBounds(x_column3, y_line2, x_width, y_height);
-		jtfName2.setText(name);
 		panelG2.add(jtfName2);
 		lStr.setBounds(x_column1, y_line3, x_width, y_height);
 		panelG2.add(lStr);
 		jtfStr.setBounds(x_column3, y_line3, x_width, y_height);
-		jtfStr.setText(str);
 		panelG2.add(jtfStr);
 		lHnr.setBounds(x_column1, y_line4, x_width, y_height);
 		panelG2.add(lHnr);
 		jtfHnr.setBounds(x_column3, y_line4, x_width, y_height);
-		jtfHnr.setText(hnr);
 		panelG2.add(jtfHnr);
 		lPlz.setBounds(x_column1, y_line5, x_width, y_height);
 		panelG2.add(lPlz);
 		jtfPlz.setBounds(x_column3, y_line5, x_width, y_height);
-		jtfPlz.setText(plz);
 		panelG2.add(jtfPlz);
 		lOrt.setBounds(x_column1, y_line6, x_width, y_height);
 		panelG2.add(lOrt);
 		jtfOrt.setBounds(x_column3, y_line6, x_width, y_height);
-		jtfOrt.setText(ort);
 		panelG2.add(jtfOrt);
 		lLand.setBounds(x_column1, y_line7, x_width, y_height);
 		panelG2.add(lLand);
 		jtfLand.setBounds(x_column3, y_line7, x_width, y_height);
-		jtfLand.setText(land);
 		panelG2.add(jtfLand);
 		lGeb2.setBounds(x_column1, y_line8, x_width, y_height);
 		panelG2.add(lGeb2);
 		jtfGeb2.setBounds(x_column3, y_line8, x_width, y_height);
-		jtfGeb2.setText(geb);
 		panelG2.add(jtfGeb2);
 		lTel.setBounds(x_column1, y_line9, x_width, y_height);
 		panelG2.add(lTel);
 		jtfTel.setBounds(x_column3, y_line9, x_width, y_height);
-		jtfTel.setText(tel);
 		panelG2.add(jtfTel);
 		bConfirme.setBounds(x_column3, y_line10, x_width, y_height);
 		panelG2.add(bConfirme);
@@ -180,7 +174,130 @@ public class DataGast extends GUIHelp
 		changeFrameG.setLocation(300, 50);
 		changeFrameG.setDefaultCloseOperation(changeFrameG.DISPOSE_ON_CLOSE);
 		changeFrameG.setVisible(true);
-		
+
 		return changeFrameG;
 	}
+
+
+
+
+	//Algemeiner Setter für Textfelder
+	
+	public void setTextTextField(JTextField x,String text) {
+		x.setText(text);
+	}
+
+
+	//Getter Textfelder
+	
+	public JTextField getJtfVn() {
+		return jtfVn;
+	}
+
+	public JTextField getJtfName() {
+		return jtfName;
+	}
+
+	public JTextField getJtfVn2() {
+		return jtfVn2;
+	}
+
+	public JTextField getJtfName2() {
+		return jtfName2;
+	}
+
+	public JTextField getJtfGeb2() {
+		return jtfGeb2;
+	}
+
+	public JTextField getJtfStr() {
+		return jtfStr;
+	}
+
+	public JTextField getJtfHnr() {
+		return jtfHnr;
+	}
+
+	public JTextField getJtfPlz() {
+		return jtfPlz;
+	}
+
+	public JTextField getJtfOrt() {
+		return jtfOrt;
+	}
+
+	public JTextField getJtfLand() {
+		return jtfLand;
+	}
+	
+	public JTextField getJtfTel() {
+		return jtfTel;
+	}
+
+
+	//Getter&Setter Tableview
+	
+	public JTableview getJTableview() {
+		return jtvGast;
+	}
+	public void setJTableview(JTableview jtvGast){
+		this.jtvGast = jtvGast;
+	}
+
+
+	
+
+
+
+
+
+
+	//Übrige Setter&Getter
+
+
+	public JPanel getPanelG1() {
+		return panelG1;
+	}
+	public void setPanelG1(JPanel panelG1) {
+		this.panelG1 = panelG1;
+	}
+
+	public JPanel getPanelG2() {
+		return panelG2;
+	}
+	public void setPanelG2(JPanel panelG2) {
+		this.panelG2 = panelG2;
+	}
+
+	public JScrollPane getScrollPaneG() {
+		return scrollPaneG;
+	}
+	public void setScrollPaneG(JScrollPane scrollPaneG) {
+		this.scrollPaneG = scrollPaneG;
+	}
+	
+	public void setChangeFrameG(JFrame changeFrameG) {
+		this.changeFrameG = changeFrameG;
+	}
+	public JFrame getChangeFrameG() {
+		return changeFrameG;
+	}
+
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public JDateChooser getGeb() {
+		return Geb;
+	}
+	public void setGeb(JDateChooser geb) {
+		Geb = geb;
+	}
+
+
+
+
 }

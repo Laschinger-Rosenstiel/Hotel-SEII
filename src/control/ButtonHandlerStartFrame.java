@@ -85,16 +85,16 @@ public class ButtonHandlerStartFrame implements ActionListener
 			}
 			else if (e.getActionCommand().equals("Gast anlegen")) 
 			{
-					sf.launchStartFrame(new DataGast().launchJPanel(), sf.getJPanel3());
+					sf.launchStartFrame(new DataGast().launchPanel(), sf.getJPanel3());
 			}
 			else if (e.getActionCommand().equals("Zimmer anlegen")) 
 			{
-				sf.launchStartFrame(new DataZimmer().launchJPanel(), sf.getJPanel3());
+				sf.launchStartFrame(new DataZimmer().launchPanel(), sf.getJPanel3());
 				
 			}
 			else if (e.getActionCommand().equals("Dienstleistung anlegen")) 
 			{
-				sf.launchStartFrame(new DataDienst().launchJPanel(), sf.getJPanel3());
+				sf.launchStartFrame(new DataDienst().launchPanel(), sf.getJPanel3());
 			}
 			
 		
