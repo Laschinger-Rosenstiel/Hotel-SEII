@@ -116,11 +116,11 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 				JOptionPane.showMessageDialog(null, gex, "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-
+/*
 			catch (NullPointerException ex) {
 				JOptionPane.showMessageDialog(guiZimmer.jf, "Bitte alle Felder ausfüllen", "Error",
 						JOptionPane.ERROR_MESSAGE);
-			}
+			}*/
 		}
 		
 		else if (e.getActionCommand().equals("NEXT2")) {
@@ -238,16 +238,16 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 				//zid aus Tabelle lesen
 				String ZID = (String) guiZimmer.availableZimmer.getSQLTable().getValueAt(guiZimmer.availableZimmer.getSQLTable().getSelectedRow(), 0).toString();
 				
-				System.out.println(ZID);
 				//Neues Zimmer-Objekt wird erstellt
 				Zimmer zimmer = new Zimmer(ZID);
 				//Neues Buchungs-Objekt wird erstellt
 				if (con == null){
 					Connection con = openDbConnection();
 					this.con = con;
+					System.out.println("con ist null!!!");
 				}
 				if (getBuchung() == null){
-					Buchung buchung = new Buchung(gast, zimmer, new Date());
+					Buchung buchung = new Buchung(gast, zimmer, new Date(), guiZimmer.getPickerVon(), guiZimmer.getPickerBis());
 					buchung.addBuchung(con);
 					setBuchung(buchung);
 				}
@@ -255,7 +255,9 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 					getBuchung().setZimmer(zimmer);
 				}
 				//Buchung wird gebucht
-				getBuchung().bookZimmer(guiZimmer.getPickerVon(), guiZimmer.getPickerBis(), con);
+				System.out.println(con.toString());
+				getBuchung().bookZimmer(con);
+				
 				
 				guiZimmer.scrollPaneZimmer.setVisible(false);
 				guiZimmer.contentpane3.remove(guiZimmer.scrollPaneZimmer);
@@ -272,6 +274,7 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 				guiZimmer.enableButton(guiZimmer.getNext2(), true);
 				guiZimmer.pickerVon.setEnabled(false);
 				guiZimmer.pickerBis.setEnabled(false);
+				guiZimmer.enableButton(guiZimmer.getBackButton(), false);
 				}
 			catch (GUIException gex) {
 				JOptionPane.showMessageDialog(null, gex, "Error",
@@ -289,6 +292,9 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 		else if (e.getActionCommand().equals("BACK")){ 
 			//Zurück zur vorherigen Karte
 			guiZimmer.cardLayout.show(guiZimmer.card, "Card1");
+			rollbackDbConnection(con);
+			closeDbConnection(con);
+			
 		}
 		
 		else if (e.getActionCommand().equals("AddDl")){
@@ -333,10 +339,10 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 				JOptionPane.showMessageDialog(null, gex, "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-			catch (NullPointerException nex) {
+			/*catch (NullPointerException nex) {
 				JOptionPane.showMessageDialog(null, "Bitte alle Felder ausfüllen", "Error",
 						JOptionPane.ERROR_MESSAGE);
-			}
+			}*/
 		}		
 
 		else if (e.getActionCommand().equals("NEXT3")){
@@ -351,7 +357,6 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 			if (answer == JOptionPane.YES_OPTION) {
 				commitDbConnection(con);
 				closeDbConnection(con);
-				con = null;	
 				guiZimmer.jf.dispose();
 				reloadMainframe();
 			}
@@ -362,8 +367,8 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 			if (answer == JOptionPane.YES_OPTION) {
 				rollbackDbConnection(con);
 				closeDbConnection(con);
-				con = null;
 				guiZimmer.jf.dispose();
+				reloadMainframe();
 			}
 		}
 
@@ -419,7 +424,7 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 		String bisSql = getSQLDate(bis);
 
 		//SQL Tabelle mit verfügbaren Zimmern wird erzeugt und zum Panel hinzugefügt
-		String query="SELECT * from zimmer where zimmer.ZID not in (SELECT `zimmer-buchung`.ZID from `zimmer-buchung` where (Von between '"+vonSql+"' AND '"+bisSql+"') OR (Bis between '"+vonSql+"' AND '"+bisSql+"') OR Von = '"+vonSql+"')";
+		String query="SELECT * from zimmer where zimmer.ZID not in (SELECT zb.ZID from `zimmer-buchung` zb, buchung b  where ((b.Von between '"+vonSql+"' AND '"+bisSql+"') OR (b.Bis between '"+vonSql+"' AND '"+bisSql+"') OR b.Von = '"+vonSql+"') and zb.BID = b.BID)";
 		if (con == null) {
 			con = openDbConnection();
 		}
@@ -437,7 +442,12 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 	}
 	
 	public void reloadMainframe(){
-		startFrame.launchStartFrame(new BookZimmer(startFrame).launchStartPanel(),startFrame.getJPanel3());
+		if (startFrame.getS() == "Manager"){
+			startFrame.launchStartFrame(new BookZimmer(startFrame).launchStartPanel(),startFrame.getJPanel3());
+		}
+		else {
+			startFrame.launchStartFrame(new BookZimmer(startFrame).launchStartPanel(),startFrame.getJPanel4());
+		}
 	}
 	
 	private void setSearchtable(String query){

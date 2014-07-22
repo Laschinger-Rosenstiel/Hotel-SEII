@@ -49,10 +49,9 @@ public class CalcPreis extends GUIHelp{
 		
 		//Query für SQL-Tabelle auf Startpanel wird gesetzt
 		query = "select gast.GID, gast.Vorname, gast.Name, gast.Geburtstag, "+ 
-				"buchung.BID, `zimmer-buchung`.ZID, buchung.Gesamtpreis "+ 
-				"from gast, buchung, `zimmer-buchung` "+
-				"where gast.GID = buchung.GID " +
-				"and buchung.BID = `zimmer-buchung`.BID";
+				"buchung.BID, buchung.Von, buchung.Bis, buchung.Gesamtpreis "+ 
+				"from gast, buchung "+
+				"where gast.GID = buchung.GID";
 		
 		//Tabelle für Buchungen wird erstellt, erzeugt und zu contentpane hinzugefügt
 		searchBu = new JTableview(query);

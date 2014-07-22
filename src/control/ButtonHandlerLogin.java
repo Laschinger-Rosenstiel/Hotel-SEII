@@ -33,6 +33,7 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 
 
 
+	@SuppressWarnings("deprecation")
 	public void actionPerformed(ActionEvent e) throws NullPointerException
 	{
 		//System.out.println("Das Ereignis hat den Wert: " +e.getActionCommand());
@@ -164,6 +165,7 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 
 
 //Möglichkeit mit Enter zu bestätigen
+	@SuppressWarnings("deprecation")
 	@Override
 	public void keyPressed(KeyEvent e) 
 	{

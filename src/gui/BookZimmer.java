@@ -84,7 +84,8 @@ public class BookZimmer extends GUIHelp{
 	
 	public BookZimmer(StartFrame startFrame){
 		this.startFrame = startFrame;
-		 ButtonHandler = new BHBookZimmer(this, startFrame);
+		ButtonHandler = new BHBookZimmer(this, startFrame);
+		 
 	}
 	
 	public JPanel launchStartPanel() {
@@ -731,6 +732,10 @@ public class BookZimmer extends GUIHelp{
 	
 	public Date getPickerBis(){
 		return pickerBis.getDate();
+	}
+	
+	public JButton getBackButton(){
+		return back;
 	}
 	
 	public void disableBackButton() {
