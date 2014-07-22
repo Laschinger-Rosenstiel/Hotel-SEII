@@ -167,7 +167,9 @@ public class BHHelp {
 	
 	public void closeDbConnection(Connection cn){
 		try {
-			cn.close();
+			if(cn != null){
+				cn.close();
+			}
 		} catch (SQLException ex) {
 			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
 		} 
