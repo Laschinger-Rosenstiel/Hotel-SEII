@@ -1,6 +1,6 @@
 package control;
-import gui.BookDl;
 import gui.BookZimmer;
+import gui.StartFrame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,26 +21,21 @@ import model.Dienstleistung;
 import model.Gast;
 import model.Zimmer;
 
-public class BHBook extends BHHelp implements ActionListener{
+public class BHBookZimmer extends BHHelp implements ActionListener{
 
-	BookDl guiDl;
 	BookZimmer guiZimmer;
 
-	static Gast gast = null;
-	static Buchung buchung = null;
-	static Connection con = null;
-	static Date von1, bis1;
-	//String tel;	
+	private Gast gast = null;
+	private static Buchung buchung = null;
+	private Connection con = null;
+	private StartFrame startFrame = null;
 
-	public BHBook(BookZimmer bookZimmer) {
+	public BHBookZimmer(BookZimmer bookZimmer, StartFrame startFrame) {
 		this.guiZimmer = bookZimmer;
 		gast = null;
-		buchung = null;
+		setBuchung(null);
 		con = null;
-	}
-
-	public BHBook(BookDl bookDl) {
-		this.guiDl = bookDl;
+		this.startFrame = startFrame;
 	}
 
 	public void actionPerformed(ActionEvent e) throws NullPointerException {
@@ -50,12 +45,10 @@ public class BHBook extends BHHelp implements ActionListener{
 			//JFrame wird gelauncht, Card1 im CardLayout wird aufgerufen
 			guiZimmer.launchJFrame();
 			guiZimmer.cardLayout.show(this.guiZimmer.card, "Card1");
-
 		}
+		
 		else if (e.getActionCommand().equals("NEXT")) {
-
 			try {
-
 				//Überprüfung der Eingaben
 				checkStringEmpty(guiZimmer.getVorname());
 				checkStringEmpty(guiZimmer.getName());
@@ -77,12 +70,9 @@ public class BHBook extends BHHelp implements ActionListener{
 				//existing als falsch gesetzt, da neuer Gast
 				gast.setExisting(false);
 				
-				
-
 				String Vorwahl = guiZimmer.getTel2_2();
 				//Splitten der Vorwahl um 0 ggf. zu ersetzen
 				if (Vorwahl.charAt(0) == '0'){
-
 					String[] splitResult = Vorwahl.split("0", 2);
 					Vorwahl = splitResult[1];
 				}
@@ -115,7 +105,6 @@ public class BHBook extends BHHelp implements ActionListener{
 				Connection con = openDbConnection();
 				this.con = con;
 				
-				
 				gast.addGast(con);
 
 				//neue contentpane wird zum CardLayout hinzugefügt, CardLayout wird auf nächste Card gesetzt
@@ -124,7 +113,6 @@ public class BHBook extends BHHelp implements ActionListener{
 			}
 
 			catch (GUIException gex){
-
 				JOptionPane.showMessageDialog(null, gex, "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -139,7 +127,7 @@ public class BHBook extends BHHelp implements ActionListener{
 			guiZimmer.launchThird();
 			guiZimmer.card.add("Card3", guiZimmer.contentpane4);
 			guiZimmer.cardLayout.show(this.guiZimmer.card, "Card3");
-			String preis =selectDbWithCon("select Gesamtpreis from buchung where bid = "+buchung.getBid(), con);
+			String preis =selectDbWithCon("select Gesamtpreis from buchung where bid = "+getBuchung().getBid(), con);
 			System.out.println(preis);
 		}
 
@@ -172,7 +160,7 @@ public class BHBook extends BHHelp implements ActionListener{
 
 			try {
 				con = null;
-				buchung = null;
+				setBuchung(null);
 				
 				//Überprüfung ob Zeile markiert
 				if (guiZimmer.sucheGast.getSQLTable().getSelectedRow() == -1) {
@@ -237,7 +225,7 @@ public class BHBook extends BHHelp implements ActionListener{
 			}
 		}
 
-		else if (e.getActionCommand().equals("BOOK ZIMMER")) {
+		else if (e.getActionCommand().equals("BookZimmer")) {
 
 			try {
 				//Überprüfung der Buchungsdaten
@@ -255,69 +243,55 @@ public class BHBook extends BHHelp implements ActionListener{
 				Zimmer zimmer = new Zimmer(ZID);
 				//Neues Buchungs-Objekt wird erstellt
 				if (con == null){
-					System.out.println("connection ist null");
 					Connection con = openDbConnection();
 					this.con = con;
 				}
-				if (buchung == null){
+				if (getBuchung() == null){
 					Buchung buchung = new Buchung(gast, zimmer, new Date());
 					buchung.addBuchung(con);
-					this.buchung = buchung;
+					setBuchung(buchung);
 				}
 				else {
-					buchung.setZimmer(zimmer);
+					getBuchung().setZimmer(zimmer);
 				}
 				//Buchung wird gebucht
-				buchung.bookZimmer(guiZimmer.getPickerVon(), guiZimmer.getPickerBis(), con);
-				
+				getBuchung().bookZimmer(guiZimmer.getPickerVon(), guiZimmer.getPickerBis(), con);
 				
 				guiZimmer.scrollPaneZimmer.setVisible(false);
 				guiZimmer.contentpane3.remove(guiZimmer.scrollPaneZimmer);
-
+				
 				if(guiZimmer.scrollPaneBookedZimmer!=null){
 					guiZimmer.scrollPaneBookedZimmer.setVisible(false);
 					guiZimmer.contentpane3.remove(guiZimmer.scrollPaneBookedZimmer);
 				}	
-				guiZimmer.bookedZimmer = buchung.getBookedZimmerTable(con);
+				guiZimmer.bookedZimmer = getBuchung().getBookedZimmerTable(con);
 				guiZimmer.scrollPaneBookedZimmer = new JScrollPane(guiZimmer.bookedZimmer.getSQLTable());
 				guiZimmer.scrollPaneBookedZimmer.setBounds(500, 280, 300, 100);
 				guiZimmer.contentpane3.add(guiZimmer.scrollPaneBookedZimmer);
 				guiZimmer.enableButton(guiZimmer.getBookZimmer(), false);
 				guiZimmer.enableButton(guiZimmer.getNext2(), true);
-				
-				
-			}
-
-		
+				guiZimmer.pickerVon.setEnabled(false);
+				guiZimmer.pickerBis.setEnabled(false);
+				}
 			catch (GUIException gex) {
 				JOptionPane.showMessageDialog(null, gex, "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}			
-			/*catch (NullPointerException nex) {
+			catch (NullPointerException nex) {
 				JOptionPane.showMessageDialog(null, "Bitte alle Felder ausfüllen!", "Error",
 						JOptionPane.ERROR_MESSAGE);
-			}*/
+			}
 			catch (SQLException sex) {
 				JOptionPane.showMessageDialog(null, sex, "Error", JOptionPane.ERROR_MESSAGE);
 			}
-			
 		}
-
 		
 		else if (e.getActionCommand().equals("BACK")){ 
 			//Zurück zur vorherigen Karte
 			guiZimmer.cardLayout.show(guiZimmer.card, "Card1");
 		}
 		
-		else if (e.getActionCommand().equals("CANCEL")){ 
-			//Fenster schließen
-			rollbackDbConnection(con);
-			guiZimmer.jf.dispose();
-			guiZimmer.jf = null;
-		}
-		
-
-		else if (e.getActionCommand().equals("Dl hinzufügen")){
+		else if (e.getActionCommand().equals("AddDl")){
 			//Dl Buchung, folgend auf Zimmer-Buchung
 			try{
 				if (guiZimmer.showDl.getSQLTable().getSelectedRow() == -1) 
@@ -337,44 +311,39 @@ public class BHBook extends BHHelp implements ActionListener{
 				} 
 				//Datum wird ausgelesen
 				guiZimmer.bookDateDl.getDate();
-				buchung.getBid();
+				getBuchung().getBid();
 				//Dienstleistungsobjekt wird erstellt
 				int did = Integer.parseInt((String) guiZimmer.showDl.getSQLTable().getValueAt(guiZimmer.showDl.getSQLTable().getSelectedRow(), 0).toString());
 				Dienstleistung dl = new Dienstleistung(did, guiZimmer.bookDateDl.getDate());
 				//buchung wird durchgeführt
 				
-				buchung.bookDl(buchung, dl, con);
+				getBuchung().bookDl(getBuchung(), dl, con);
 				
 				if(guiZimmer.scrollPaneBookedDl!=null){
 					guiZimmer.scrollPaneBookedDl.setVisible(false);
 					guiZimmer.contentpane4.remove(guiZimmer.scrollPaneBookedDl);
 				}	
-				guiZimmer.bookedDl = buchung.getBookedDlTable(con);
+				guiZimmer.bookedDl = getBuchung().getBookedDlTable(con);
 				guiZimmer.scrollPaneBookedDl = new JScrollPane(guiZimmer.bookedDl.getSQLTable());
 				guiZimmer.scrollPaneBookedDl.setBounds(470, 80, 300, 100);
 				guiZimmer.contentpane4.add(guiZimmer.scrollPaneBookedDl);
 			}
-		//	}
+		
 			catch (GUIException gex) {
 				JOptionPane.showMessageDialog(null, gex, "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-			/*catch (NullPointerException nex) {
+			catch (NullPointerException nex) {
 				JOptionPane.showMessageDialog(null, "Bitte alle Felder ausfüllen", "Error",
 						JOptionPane.ERROR_MESSAGE);
-			}*/
+			}
 		}		
 
 		else if (e.getActionCommand().equals("NEXT3")){
 			//Abbrechen der DL-Buchung nach Zimmer-Buchung
-			
 			guiZimmer.launchFourth();
 			guiZimmer.card.add("Card4", guiZimmer.contentpane5);
 			guiZimmer.cardLayout.show(this.guiZimmer.card, "Card4");
-			
-			
-			/*guiZimmer.jf.dispose();
-			guiZimmer.jf = null;*/
 		}
 		
 		else if(e.getActionCommand().equals("COMMIT")){
@@ -382,127 +351,22 @@ public class BHBook extends BHHelp implements ActionListener{
 			if (answer == JOptionPane.YES_OPTION) {
 				commitDbConnection(con);
 				closeDbConnection(con);
-				con = null;
+				con = null;	
 				guiZimmer.jf.dispose();
 				reloadMainframe();
 			}
 		}
 		
-		else if (e.getActionCommand().equals("cancel All")){
+		else if (e.getActionCommand().equals("CancelAll")){
 			int answer = JOptionPane.showConfirmDialog(guiZimmer.jf, "Möchten Sie die Buchung wirklich abbrechen?", null,JOptionPane.YES_NO_OPTION);
 			if (answer == JOptionPane.YES_OPTION) {
 				rollbackDbConnection(con);
 				closeDbConnection(con);
 				con = null;
 				guiZimmer.jf.dispose();
-				guiZimmer.jf = null;
 			}
 		}
 
-
-		
-		else if (e.getActionCommand().equals("NewBookingDl")) {
-			try {//Dienstleistung buchen
-				//Zeile markiert?
-				if (guiDl.sucheGast.getSQLTable().getSelectedRow() == -1) {
-
-					throw new GUIException("Fehler: Zeile nicht markiert!");
-				}
-				
-				
-				//ausgewählte Zeile auslesen
-				String gid = (String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 0).toString();
-				String vorname = (String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 1).toString();
-				String name = (String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 2).toString();
-				String geb = getDateSqlToGer((String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 3).toString());
-				int bid = Integer.parseInt((String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 4).toString());
-				String zid = (String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 5).toString();
-				String von = getDateSqlToGer((String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 6).toString());
-				String bis = getDateSqlToGer((String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 7).toString());
-				
-				//SQL-Datum in deutsches Datum
-				SimpleDateFormat toDate = new SimpleDateFormat("dd.MM.yyyy");
-				Date Geb = toDate.parse(geb);
-				Date vonD = toDate.parse(von);
-				Date bisD = toDate.parse(bis); 
-				
-				//neues Gast-Objekt wird erzeugt
-				Gast gast = new Gast(Integer.parseInt(gid), vorname, name, Geb);
-				//neue Buchung wird erzeugt
-				Buchung buchung = new Buchung(bid);
-				buchung.setVon(vonD);
-				buchung.setBis(bisD);
-				//buchung und gast wird zwischengespeichert
-				this.buchung = buchung;
-				this.gast = gast;
-				//Frame für DL-Buchung wird geöffnet
-				guiDl.launchJFrame();
-				
-				guiDl.bookDate2.setSelectableDateRange(vonD, bisD);
-				//Labels werden nach Gastdaten gesetzt
-				guiDl.labelId2_2.setText(gid);
-				guiDl.labelVor2_2.setText(vorname);
-				guiDl.labelName2_2.setText(name);
-				guiDl.labelZimmer2_2.setText(zid);
-				guiDl.labelVon2_2.setText(von);
-				guiDl.labelBis2_2.setText(bis);
-				
-				//update SQL-Table in Startpanel
-				updateTable(guiDl.contentpane1, guiDl.scrollPaneSuche, guiDl.sucheGast, guiDl.getQuery(), guiDl.scrollPaneSuche.getX(), guiDl.scrollPaneSuche.getY(), guiDl.scrollPaneSuche.getWidth(), guiDl.scrollPaneSuche.getHeight(), null);
-				
-			}
-			catch (GUIException gex ){
-				JOptionPane.showMessageDialog(null, gex, "Error",
-						JOptionPane.ERROR_MESSAGE);
-			} catch (ParseException e1) {
-				JOptionPane.showMessageDialog(null, e1, "Error",
-						JOptionPane.ERROR_MESSAGE);
-				e1.printStackTrace();
-			}
-		}
-
-		else if (e.getActionCommand().equals("BOOK?Dl")) {
-			try {
-				//durchführen der Zimmerbuchung
-				//Zeile markiert?
-				if (guiDl.tableDl.getSQLTable().getSelectedRow() == -1) {
-					throw new GUIException("Fehler: Zeile nicht markiert!");
-				}
-				//Buchungsdatum überprüfen
-				checkBookingDateDl(guiDl.bookDate2.getDate());
-				String a = getSQLDate(guiDl.bookDate2.getDate());
-				String von = getSQLDate(buchung.getVon());
-				String bis = getSQLDate(buchung.getBis());
-				
-				System.out.println(a + " " + von + " " + bis + " ");
-				//wirklich buchen?
-				int answer = JOptionPane.showConfirmDialog(guiDl.jf, "Dienstleistung wirklich buchen?", "Error",JOptionPane.YES_NO_OPTION);
-				if (answer == JOptionPane.YES_OPTION) {
-					
-					//Datum in Range?
-					if(!checkDlRange(buchung.getVon(), buchung.getBis(), guiDl.bookDate2.getDate()))
-						throw new GUIException("Buchungsdatum überprüfen");
-						//Dienstleistungsnummer wird ausgelesen
-					int did = Integer.parseInt((String) guiDl.tableDl.getSQLTable().getValueAt(guiDl.tableDl.getSQLTable().getSelectedRow(), 0).toString());
-					//DL-Objekt wird erzeugt
-					Dienstleistung dl = new Dienstleistung(did, guiDl.bookDate2.getDate());
-					//buchung wird durchgeführt
-					Connection con = openDbConnection();
-					buchung.bookDl(buchung, dl, con);
-					commitDbConnection(con);
-					//Fenster wird geschlossen
-					guiDl.jf.dispose();
-				}
-			}
-			catch (GUIException gex){
-				JOptionPane.showMessageDialog(null, gex, "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-			catch (NullPointerException ex) {
-				JOptionPane.showMessageDialog(guiDl.jf, "Bitte alle Felder ausfüllen", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
 		else if (e.getActionCommand().equals("SEARCH")) {
 			//Standardparameter werden gesetzt, damit bei leeren Feld auf alles geprüft wird
 			String gebSuche = "%";
@@ -534,65 +398,11 @@ public class BHBook extends BHHelp implements ActionListener{
 					"' AND Name like '" + nameSuche +"' AND Geburtstag like '" + gebSuche+"'";
 
 			//SQL-Tabelle wird erzeugt und zu contentpane hinzugefügt
-			Connection sucheGast = openDbConnection();
-			guiZimmer.sucheGast = new JTableview(query, sucheGast);
-			closeDbConnection(sucheGast);
-			
-			JTable suche = guiZimmer.sucheGast.getSQLTable();
+			setSearchtable(query);
 
-			guiZimmer.scrollPaneSuche.setVisible(false);
-			guiZimmer.scrollPaneSuche = null;
-			guiZimmer.scrollPaneSuche = new JScrollPane(suche);
-			guiZimmer.scrollPaneSuche.setBounds(10, 360, 1000, 200);
-			guiZimmer.contentpane1.add(guiZimmer.scrollPaneSuche);
-
-		}
-
-		else if (e.getActionCommand().equals("SEARCHDl")) {
-
-			//Standardparameter werden gesetzt, damit bei leeren Feld auf alles geprüft wird
-			String gebSuche = "%";
-			String vorSuche = "%";
-			String nameSuche = "%";
-			String gidSuche = "%";
-			guiDl.sucheGast = null;
-
-			//Exception für falsches Datum wird abgefangen
-			try {
-				gebSuche = getSQLDate(guiDl.getGebSuche());
-			}
-			catch (NullPointerException ex) {
-
-			}
-
-			//Eingabefelder werden überprüft und bei Eingabe geändert 
-			if (!guiDl.getGidSuche().equals(""))
-				gidSuche = guiDl.getGidSuche();
-
-			if (!guiDl.getVorSuche().equals(""))
-				vorSuche = guiDl.getVorSuche()+"%";			
-
-			if (!guiDl.getNameSuche().equals(""))
-				nameSuche = guiDl.getNameSuche() +"%";
-
-			//Query für Suche
-			String query = guiDl.getQuery() + " AND gast.GID like '"+gidSuche+"' AND gast.Vorname like '"+vorSuche+ "' AND gast.Name like'"+ nameSuche+"' AND gast.Geburtstag like '"+gebSuche+"'";
-
-			//SQL-Tabelle wird erzeugt und zu contentpane hinzugefügt
-			Connection sucheGast = openDbConnection();
-			guiDl.sucheGast = new JTableview(query, sucheGast);
-			JTable suche = guiDl.sucheGast.getSQLTable();
-			closeDbConnection(sucheGast);
-
-			guiDl.scrollPaneSuche.setVisible(false);
-			guiDl.scrollPaneSuche = null;
-			guiDl.scrollPaneSuche = new JScrollPane(suche);
-			guiDl.scrollPaneSuche.setBounds(10, 320, 1000, 200);
-			guiDl.contentpane1.add(guiDl.scrollPaneSuche);
 		}
 	}
-
-	
+		
 	
 	private JTableview getAvailableRoomTable() throws GUIException{
 		Date von = guiZimmer.getPickerVon();
@@ -602,7 +412,7 @@ public class BHBook extends BHHelp implements ActionListener{
 		
 		Calendar vonC = new GregorianCalendar();
 		vonC.setTime(von);
-		vonC.add(vonC.DATE, 1);	
+		vonC.add(Calendar.DATE, 1);	
 		
 		//Buchungsdatum wird in SQL-Datus-Format umgewandelt
 		String vonSql = getSQLDate(vonC.getTime());
@@ -619,15 +429,7 @@ public class BHBook extends BHHelp implements ActionListener{
 	}
 	
 	public Connection getCon(){
-		
 		return con;
-	}
-	
-	
-	
-	
-	public Buchung getBuchung(){
-		return buchung;
 	}
 	
 	public Gast getGast(){
@@ -635,8 +437,25 @@ public class BHBook extends BHHelp implements ActionListener{
 	}
 	
 	public void reloadMainframe(){
-		guiZimmer = null;
-		guiZimmer = new BookZimmer();
-		guiZimmer.launchStartPanel();
+		startFrame.launchStartFrame(new BookZimmer(startFrame).launchStartPanel(),startFrame.getJPanel3());
+	}
+	
+	private void setSearchtable(String query){
+		guiZimmer.sucheGast = new JTableview(query);
+		
+		JTable suche = guiZimmer.sucheGast.getSQLTable();
+
+		guiZimmer.scrollPaneSuche.setVisible(false);
+		guiZimmer.scrollPaneSuche = new JScrollPane(suche);
+		guiZimmer.scrollPaneSuche.setBounds(10, 360, 800, 200);
+		guiZimmer.contentpane1.add(guiZimmer.scrollPaneSuche);
+	}
+
+	public static Buchung getBuchung() {
+		return buchung;
+	}
+
+	public static void setBuchung(Buchung buchung) {
+		BHBookZimmer.buchung = buchung;
 	}
 }

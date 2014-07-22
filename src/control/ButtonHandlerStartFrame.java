@@ -37,7 +37,7 @@ public class ButtonHandlerStartFrame implements ActionListener
 			System.out.println("Das Ereignis hat den Wert: " +e.getActionCommand());
 			if (e.getActionCommand().equals("Zimmer buchen"))
 			{
-				sf.launchStartFrame(new BookZimmer().launchStartPanel(),sf.getJPanel4());
+				sf.launchStartFrame(new BookZimmer(sf).launchStartPanel(),sf.getJPanel4());
 			}
 			else if (e.getActionCommand().equals("Dl buchen"))
 			{
@@ -61,7 +61,7 @@ public class ButtonHandlerStartFrame implements ActionListener
 			System.out.println("Das Ereignis hat den Wert: " +e.getActionCommand());
 			if (e.getActionCommand().equals("Zimmer buchen"))
 			{
-				sf.launchStartFrame(new BookZimmer().launchStartPanel(),sf.getJPanel3());
+				sf.launchStartFrame(new BookZimmer(sf).launchStartPanel(),sf.getJPanel3());
 			}
 			else if (e.getActionCommand().equals("Dl buchen"))
 			{

@@ -20,11 +20,13 @@ public class JTableview extends JTable
 	public JTableview(String SQLquery, Connection con) 
 	{ 
 		SQLTable = genSQLTable(SQLquery, con); 
+		SQLTable.getTableHeader().setReorderingAllowed(false) ;
 	} 
 	
 	public JTableview(String SQLquery){
 		Connection con = openDbConnection();
 		SQLTable = genSQLTable(SQLquery, con);
+		SQLTable.getTableHeader().setReorderingAllowed(false) ;
 		closeDbConnection(con);
 	}
 	

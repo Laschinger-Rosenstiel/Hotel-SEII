@@ -14,7 +14,6 @@ import javax.swing.JTable;
 
 import model.Buchung;
 import model.Dienstleistung;
-import model.Gast;
 
 public class BHCancel extends BHHelp implements ActionListener{
 
@@ -49,10 +48,6 @@ public class BHCancel extends BHHelp implements ActionListener{
 					String Zbid = (String) guiZimmer.sucheBu.getSQLTable().getValueAt(guiZimmer.sucheBu.getSQLTable().getSelectedRow(), 5).toString();
 					int zbid = Integer.parseInt(Zbid);
 					//Gid auslesen
-					String Gid = (String) guiZimmer.sucheBu.getSQLTable().getValueAt(guiZimmer.sucheBu.getSQLTable().getSelectedRow(), 0).toString();
-					int gid = Integer.parseInt(Gid);
-					//wieviele Zimmerbuchungen hat der Gast?
-					//int anzahlBuchungen =Integer.parseInt(selectDB("SELECT count(*) from `zimmer-buchung` where GID = " + gid));
 					
 					Connection con = openDbConnection();
 				

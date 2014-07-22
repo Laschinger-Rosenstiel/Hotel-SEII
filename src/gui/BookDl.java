@@ -14,7 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import control.BHBook;
+import control.BHBookDl;
 import control.JTableview;
 
 import com.toedter.calendar.JDateChooser;
@@ -76,12 +76,13 @@ public class BookDl extends GUIHelp{
 		Sql.format(past.getTime());
 		
 		//Query für Tabelle auf dem Startpanel
-		query = "SELECT gast.GID, gast.Vorname, gast.Name, gast.Geburtstag, buchung.BID, `zimmer-buchung`.ZID, `zimmer-buchung`.Von, `zimmer-buchung`.Bis from gast, buchung, `zimmer-buchung` where gast.GID = buchung.GID AND buchung.BID = `zimmer-buchung`.BID AND `zimmer-buchung`.Bis >= '"+getSQLDate(new Date())+"'";
+		
+		query = "SELECT gast.GID, gast.Vorname, gast.Name, gast.Geburtstag, buchung.BID, `zimmer-buchung`.Von, `zimmer-buchung`.Bis from gast, buchung, `zimmer-buchung` where gast.GID = buchung.GID AND buchung.BID = `zimmer-buchung`.BID AND `zimmer-buchung`.Bis >= '"+getSQLDate(new Date())+"'";
 
 		//ActionListener und ActionCommand für Buttons werden gesetzt
-		buttonSearch.addActionListener(new BHBook(this));
+		buttonSearch.addActionListener(new BHBookDl(this));
 		buttonSearch.setActionCommand("SEARCHDl");
-		buttonBook.addActionListener(new BHBook(this));
+		buttonBook.addActionListener(new BHBookDl(this));
 		buttonBook.setActionCommand("NewBookingDl");
 		
 		//Größe und Koordinaten der GUI-Objekte wird gesetzt, Standardvorgaben durch Vererbung von Klasse GUIHelp
@@ -169,7 +170,7 @@ public class BookDl extends GUIHelp{
 		jf.setContentPane(contentpane2);
 		
 		//ActionListener und ActionCommands für Buttons werden gesetzt
-		buttonBook2.addActionListener(new BHBook(this));
+		buttonBook2.addActionListener(new BHBookDl(this));
 		buttonBook2.setActionCommand("BOOK?Dl");
 		
 		//Größe und Koordinaten der GUI-Objekte wird gesetzt, Standardvorgaben durch Vererbung von Klasse GUIHelp
