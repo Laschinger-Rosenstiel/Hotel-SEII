@@ -21,7 +21,7 @@ public class BHHelp {
 
 	//wandelt date in SQL-Format um
 	public String getSQLDate(Date date) {
-		SimpleDateFormat Sql =new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat Sql =new SimpleDateFormat("yyyy-MM-dd");		
 		return Sql.format(date);
 	}
 	//überprüft ob Postleitzahl
@@ -169,6 +169,7 @@ public class BHHelp {
 		try {
 			if(cn != null){
 				cn.close();
+				cn = null;
 			}
 		} catch (SQLException ex) {
 			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 

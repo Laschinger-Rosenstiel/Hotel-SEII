@@ -36,7 +36,7 @@ public class BHOther extends BHHelp implements ActionListener{
 			Date bis = guiZimmer.getPickerBis();
 			Calendar vonC = new GregorianCalendar();
 			vonC.setTime(von);
-			vonC.add(vonC.DATE, 1);
+			vonC.add(Calendar.DATE, 1);
 			System.out.println(getSQLDate(vonC.getTime()));
 	
 			

@@ -43,9 +43,8 @@ public class BHBookDl extends BHHelp implements ActionListener{
 				String name = (String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 2).toString();
 				String geb = getDateSqlToGer((String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 3).toString());
 				int bid = Integer.parseInt((String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 4).toString());
-				String zid = (String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 5).toString();
-				String von = getDateSqlToGer((String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 6).toString());
-				String bis = getDateSqlToGer((String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 7).toString());
+				String von = getDateSqlToGer((String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 5).toString());
+				String bis = getDateSqlToGer((String) guiDl.sucheGast.getSQLTable().getValueAt(guiDl.sucheGast.getSQLTable().getSelectedRow(), 6).toString());
 				
 				//SQL-Datum in deutsches Datum
 				SimpleDateFormat toDate = new SimpleDateFormat("dd.MM.yyyy");
@@ -70,7 +69,6 @@ public class BHBookDl extends BHHelp implements ActionListener{
 				guiDl.labelId2_2.setText(gid);
 				guiDl.labelVor2_2.setText(vorname);
 				guiDl.labelName2_2.setText(name);
-				guiDl.labelZimmer2_2.setText(zid);
 				guiDl.labelVon2_2.setText(von);
 				guiDl.labelBis2_2.setText(bis);
 				
@@ -131,7 +129,7 @@ public class BHBookDl extends BHHelp implements ActionListener{
 			}
 		}
 		
-		else if (e.getActionCommand().equals("SEARCHDl")) {
+		else if (e.getActionCommand().equals("SearchDl")) {
 
 			//Standardparameter werden gesetzt, damit bei leeren Feld auf alles geprüft wird
 			String gebSuche = "%";
