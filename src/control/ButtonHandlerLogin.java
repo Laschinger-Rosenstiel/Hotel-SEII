@@ -33,6 +33,7 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 
 
 
+	@SuppressWarnings("deprecation")
 	public void actionPerformed(ActionEvent e) throws NullPointerException
 	{
 		//System.out.println("Das Ereignis hat den Wert: " +e.getActionCommand());
@@ -90,23 +91,21 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 			if(s.equals("Rezeption"))
 			{
 				try{
-					//Vergleich Passwort mit DB-Eintrag
-					String passwort = selectDB("Select Passwort from hotel-seII.benutzer where Benutzername = 'Rezeption'");
-					System.out.println(passwort);
+					//Passwort mit DB-Eintrag vergleichen
+					String passwort = selectDB("Select Passwort from benutzer where Benutzername = 'Rezeption'");
 					checkStringEmpty(lf.jpf.getText());
 					if(lf.jpf.getText().equals(passwort))
 					{
-						//Starten als MA der Rezeption
+						//Als MA der Rezeption starten
 						sf = new StartFrame();
 						sf.setS(s);
 						sf.launchStartFrame(sf.getJPanel2(), sf.getJPanel4());
 						lf.jf.dispose();
-						
 					}
 					else
 					{
 						try{
-							checkLogin(lf.pw, lf.jpf.getText());
+							checkLogin(passwort, lf.jpf.getText());
 						}
 						catch(GUIException gex)
 						{
@@ -114,19 +113,22 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
+
+
 				}
 				catch(GUIException gex)
 				{
 					JOptionPane.showMessageDialog(null, gex, "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
+
 			}
 			else if(s.equals("Manager"))
 			{
 
 				try{
 					//Passwort mit DB-Eintrag vergleichen
-					String passwort = selectDB("Select Passwort from hotel-seII.benutzer where Benutzername = 'Manager'");
+					String passwort = selectDB("Select Passwort from benutzer where Benutzername = 'Manager'");
 					checkStringEmpty(lf.jpf.getText());
 					if(lf.jpf.getText().equals(passwort))
 					{
@@ -139,7 +141,7 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 					else
 					{
 						try{
-							checkLogin(lf.pw, lf.jpf.getText());
+							checkLogin(passwort, lf.jpf.getText());
 						}
 						catch(GUIException gex)
 						{
@@ -149,13 +151,11 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 					}
 
 				}
-				
 				catch(GUIException gex)
 				{
 					JOptionPane.showMessageDialog(null, gex, "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
-				
 			}
 		}
 	}
@@ -164,6 +164,7 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 
 
 //Möglichkeit mit Enter zu bestätigen
+	@SuppressWarnings("deprecation")
 	@Override
 	public void keyPressed(KeyEvent e) 
 	{
@@ -243,19 +244,12 @@ public class ButtonHandlerLogin extends BHHelp implements ActionListener , KeyLi
 		}
 	}
 	
-
-
-
-
 		@Override
 		public void keyReleased(KeyEvent arg0) 
 		{
 			// TODO Auto-generated method stub
 
 		}
-
-
-
 
 		@Override
 		public void keyTyped(KeyEvent arg0) 

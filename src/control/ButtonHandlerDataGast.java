@@ -48,13 +48,13 @@ public class ButtonHandlerDataGast extends BHHelp implements ActionListener {
 		//Behandlung der DataGast Buttons
 		if(idg!=null)
 		{
-			if(e.getActionCommand().equals(idg.ACTION_CHANGE)){
+			if(e.getActionCommand().equals(InterfaceDataGast.ACTION_CHANGE)){
 				try {
 
 					if(idg.getJTableview().getSQLTable().getSelectedRow()== -1)
 						throw new GUIException("Fehler: Zeile nicht markiert!");
 					//liest Werte aus der Datenbank
-					String id = (String) idg.getJTableview().getSQLTable().getValueAt(idg.getJTableview().getSQLTable().getSelectedRow(), 0).toString(); 
+				//	String id = (String) idg.getJTableview().getSQLTable().getValueAt(idg.getJTableview().getSQLTable().getSelectedRow(), 0).toString(); 
 					String vn = (String) idg.getJTableview().getSQLTable().getValueAt(idg.getJTableview().getSQLTable().getSelectedRow(), 1).toString(); 
 					String name = (String) idg.getJTableview().getSQLTable().getValueAt(idg.getJTableview().getSQLTable().getSelectedRow(), 2).toString(); 
 					String str = (String) idg.getJTableview().getSQLTable().getValueAt(idg.getJTableview().getSQLTable().getSelectedRow(), 3).toString(); 
@@ -86,7 +86,7 @@ public class ButtonHandlerDataGast extends BHHelp implements ActionListener {
 				}
 
 			}
-			else if(e.getActionCommand().equals(idg.ACTION_SEARCH)){
+			else if(e.getActionCommand().equals(InterfaceDataGast.ACTION_SEARCH)){
 				String gebSuche = "";				
 				try{
 					gebSuche = getSQLDate(idg.getGeb().getDate());
@@ -109,7 +109,7 @@ public class ButtonHandlerDataGast extends BHHelp implements ActionListener {
 				idg.getPanelG1().add(idg.getScrollPaneG());
 
 			}
-			else if (e.getActionCommand().equals(idg.ACTION_CONFIRM))
+			else if (e.getActionCommand().equals(InterfaceDataGast.ACTION_CONFIRM))
 			{
 
 				try
@@ -157,7 +157,7 @@ public class ButtonHandlerDataGast extends BHHelp implements ActionListener {
 				}
 
 			}
-			else if(e.getActionCommand().equals(idg.ACTION_DELETE))
+			else if(e.getActionCommand().equals(InterfaceDataGast.ACTION_DELETE))
 			{
 				try {
 					//Zeile ausgewählt?

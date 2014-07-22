@@ -119,7 +119,7 @@ public class BHHelp {
 
 		if(eingabe.equals(pw))
 		{
-
+			
 		}
 		else
 		{

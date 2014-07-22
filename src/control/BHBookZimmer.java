@@ -437,7 +437,13 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 	}
 	
 	public void reloadMainframe(){
-		startFrame.launchStartFrame(new BookZimmer(startFrame).launchStartPanel(),startFrame.getJPanel3());
+		if (startFrame.getS() == "Rezeption"){
+
+			startFrame.launchStartFrame(new BookZimmer(startFrame).launchStartPanel(),startFrame.getJPanel4());
+		}
+		else{
+			startFrame.launchStartFrame(new BookZimmer(startFrame).launchStartPanel(),startFrame.getJPanel3());
+		}
 	}
 	
 	private void setSearchtable(String query){
