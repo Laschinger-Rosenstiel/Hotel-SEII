@@ -114,6 +114,7 @@ public class ModelHelp {
 				Statement st = cn.createStatement(); 
 				st.execute(SQLquery); 
 				st.close();
+				System.out.println(SQLquery);
 				
 			} 
 			catch (SQLException ex) 
@@ -144,13 +145,10 @@ public class ModelHelp {
 
 			Class.forName( sDbDriver ); 
 			Connection cn = DriverManager.getConnection( sDbUrl, sUsr, sPwd ); 
-			Statement st = cn.createStatement(); 
-			ResultSet rs = st.executeQuery(SQLquery);
-			rs.next();
-			String result = rs.getString(1);
-
-			st.close(); 
-			cn.close(); 
+			
+			String result = selectDbWithCon(SQLquery, cn);
+			
+			cn.close();
 			return result;
 		} 
 		catch (SQLException ex) 
@@ -163,6 +161,26 @@ public class ModelHelp {
 			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage());
 			return "";
 		} 
+	}
+	
+	/**
+	 * Select-Befehl mit übergebener Connection
+	 */
+	public String selectDbWithCon(String SQLquery, Connection cn){
+		
+		try {
+			Statement st = cn.createStatement();
+			ResultSet rs = st.executeQuery(SQLquery);
+			rs.next();
+			String result = rs.getString(1);
 
+			st.close(); 
+			
+			return result;
+		} catch (SQLException ex) 
+		{ 
+			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+			return "";
+		} 
 	}
 }

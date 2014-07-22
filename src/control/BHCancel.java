@@ -1,5 +1,6 @@
 package control;
 
+
 import gui.CancelDl;
 import gui.CancelZimmer;
 
@@ -44,26 +45,32 @@ public class BHCancel extends BHHelp implements ActionListener{
 					//Bid auslesen
 					String Bid = (String) guiZimmer.sucheBu.getSQLTable().getValueAt(guiZimmer.sucheBu.getSQLTable().getSelectedRow(), 4).toString();
 					int bid = Integer.parseInt(Bid);
+					//zbid auslesen
+					String Zbid = (String) guiZimmer.sucheBu.getSQLTable().getValueAt(guiZimmer.sucheBu.getSQLTable().getSelectedRow(), 5).toString();
+					int zbid = Integer.parseInt(Zbid);
 					//Gid auslesen
 					String Gid = (String) guiZimmer.sucheBu.getSQLTable().getValueAt(guiZimmer.sucheBu.getSQLTable().getSelectedRow(), 0).toString();
 					int gid = Integer.parseInt(Gid);
 					//wieviele Zimmerbuchungen hat der Gast?
-					int anzahlBuchungen =Integer.parseInt(selectDB("SELECT count(GID) from buchung where GID = " + gid));
+					//int anzahlBuchungen =Integer.parseInt(selectDB("SELECT count(*) from `zimmer-buchung` where GID = " + gid));
 					
 					Connection con = openDbConnection();
-					//wenn nur eine Zimmerbuchung, wird Gast gelöscht und alle seine Buchungen mit
-					if (anzahlBuchungen == 1){
-						Gast gast = new Gast(gid);
-						gast.deleteGast(con);
-					}
-					//sonst nur die Zimmerbuchung
-					else {
-						Buchung buchung = new Buchung(bid);
-						buchung.cancelZimmer(buchung, con);
+				
+					Buchung buchung = new Buchung(bid, zbid);
+					buchung.cancelZimmer(buchung, con);
+
+					commitDbConnection(con);
+				
+					if (guiZimmer.scrollPaneSuche != null){
+						guiZimmer.scrollPaneSuche.setVisible(false);
 					}
 					
-					updateTable(guiZimmer.contentpane1, guiZimmer.scrollPaneSuche, guiZimmer.sucheBu, guiZimmer.getQuery(), guiZimmer.scrollPaneSuche.getX(), guiZimmer.scrollPaneSuche.getY(), guiZimmer.scrollPaneSuche.getWidth(), guiZimmer.scrollPaneSuche.getHeight(), con);
-					commitDbConnection(con);
+					guiZimmer.sucheBu = null;
+					guiZimmer.sucheBu = new JTableview(guiZimmer.getQuery());
+					guiZimmer.scrollPaneSuche = null;
+					guiZimmer.scrollPaneSuche = new JScrollPane(guiZimmer.sucheBu.getSQLTable());
+					guiZimmer.scrollPaneSuche.setBounds(10, 280, 1000, 200);
+					guiZimmer.contentpane1.add(guiZimmer.scrollPaneSuche);
 				}
 				catch (GUIException gex) {
 					JOptionPane.showMessageDialog(null, gex, "Error",
@@ -96,8 +103,17 @@ public class BHCancel extends BHHelp implements ActionListener{
 					//stornieren
 					buchung.cancelDl(buchung, dl, con);
 					commitDbConnection(con);
-					updateTable(guiDl.contentpane1, guiDl.scrollPaneSuche, guiDl.sucheBu, guiDl.getQuery(), guiDl.scrollPaneSuche.getX(), guiDl.scrollPaneSuche.getY(), guiDl.scrollPaneSuche.getWidth(), guiDl.scrollPaneSuche.getHeight(), null);
+					//updateTable(guiDl.contentpane1, guiDl.scrollPaneSuche, guiDl.sucheBu, guiDl.getQuery(), guiDl.scrollPaneSuche.getX(), guiDl.scrollPaneSuche.getY(), guiDl.scrollPaneSuche.getWidth(), guiDl.scrollPaneSuche.getHeight(), null);
 					
+					if (guiDl.scrollPaneSuche != null){
+						guiDl.scrollPaneSuche.setVisible(false);
+					}
+					guiDl.sucheBu = null;
+					guiDl.sucheBu = new JTableview(guiDl.getQuery());
+					guiDl.scrollPaneSuche = null;
+					guiDl.scrollPaneSuche = new JScrollPane(guiDl.sucheBu.getSQLTable());
+					guiDl.scrollPaneSuche.setBounds(10, 280, 1000, 200);
+					guiDl.contentpane1.add(guiDl.scrollPaneSuche);
 				}
 				catch (GUIException gex) {
 					JOptionPane.showMessageDialog(null, gex, "Error",

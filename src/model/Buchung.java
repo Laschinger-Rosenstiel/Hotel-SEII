@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import control.JTableview;
+
 public class Buchung extends ModelHelp{
 
 	private Date erfassungsdatum;
@@ -14,6 +16,7 @@ public class Buchung extends ModelHelp{
 	private Date bis;
 	private int bid;
 	private int dlbid;
+	private int zbid;
 	private Gast gast;
 	private Zimmer zimmer;
 	
@@ -28,6 +31,10 @@ public class Buchung extends ModelHelp{
 		this.bid = bid;
 	}
 	
+	public Buchung(int bid, int zbid){
+		this.bid = bid;
+		this.zbid=zbid;
+	}	
 	
 	public void addBuchung(Connection con){
 		String query = "INSERT INTO buchung (GID, Erfassungsdatum) VALUES("+gast.getGid()+", '" + getSQLDate(erfassungsdatum) + "')";
@@ -59,12 +66,15 @@ public class Buchung extends ModelHelp{
 		//hotel-zimmerbuchung wird geschrieben
 		String queryZimmerBooking = "INSERT INTO `zimmer-buchung` (BID, ZID, Von, Bis) VALUES("+getBid()+", "+zimmer.getZid()+
 				", '" + getSQLDate(von) + "', '" + getSQLDate(bis)+"'  )";
-		System.out.println(queryZimmerBooking);
 		writeDbAi(queryZimmerBooking, con);
 		//Gesamtpreis wird berechnet und gesetzt
 		String queryUpdatePreis = "update buchung set Gesamtpreis = Gesamtpreis+"+preis+"*"+days+ " where BID = "+this.bid;
-		writeDb(queryUpdatePreis, con);
-		System.out.println(queryUpdatePreis);		
+		writeDb(queryUpdatePreis, con);	
+	}
+	
+	public String getPreis(int bid, Connection con){
+		String query = "select buchung.Gesamtpreis from buchung where BID = "+bid;
+		return selectDbWithCon(query, con);
 	}
 	
 	public void bookDl(Buchung buchung, Dienstleistung dl, Connection con) {
@@ -74,15 +84,20 @@ public class Buchung extends ModelHelp{
 		int DLBID = writeDbAi(query, con);
 		dlbid = DLBID;
 		//Preis wird verändert
-		String query2 = "update buchung set Gesamtpreis = Gesamtpreis + (select Preis from dienstleistung where DID = '" + dl.getDid() +"')";
+		String query2 = "update buchung set Gesamtpreis = Gesamtpreis + (select Preis from dienstleistung where DID = '" + dl.getDid() +"') where BID = '"+getBid()+"'";
 		writeDb(query2, con);
 	}
 	
 	public void cancelZimmer(Buchung buchung, Connection con) {
 		//stornierung Zimmerbuchung
 		this.bid=buchung.getBid();
-		writeDb("delete from `zimmer-buchung` where BID = " + bid, con);
-		writeDb("delete from buchung where BID = " +bid, con);
+		this.zbid =buchung.getZbid();
+		
+		writeDb("delete from `zimmer-buchung` where ZBID = " + zbid, con);
+		int count = Integer.parseInt(selectDbWithCon("select count(*) from `zimmer-buchung` where BID = " +bid, con));
+		if (count == 0){
+			writeDb("delete from buchung where BID = " +bid, con);	
+		}
 		
 	}
 	
@@ -130,6 +145,39 @@ public class Buchung extends ModelHelp{
 
 	public void setZimmer(Zimmer zimmer) {
 		this.zimmer = zimmer;
+	}
+	
+	public JTableview getBookedZimmerTable (Connection con){
+		String query = "select zb.ZID, zb.Von, zb.Bis from `zimmer-buchung` zb where bid =" + getBid();
+		JTableview bookedZimmerTable;
+		if (con == null){
+			bookedZimmerTable = new JTableview(query);
+			
+		}
+		else {
+			bookedZimmerTable = new JTableview(query, con);
+		}
+		return bookedZimmerTable;
+	}
+	
+	public JTableview getBookedDlTable (Connection con){
+		String query = "SELECT dl.Bezeichnung, dlb.Datum from `dl-buchung` dlb, dienstleistung dl where dlb.BID =" + getBid() +" and dl.did = dlb.did";
+		JTableview bookedDlTable;
+		if (con == null){
+			bookedDlTable = new JTableview(query);
+		}
+		else {
+			bookedDlTable = new JTableview(query, con);
+		}
+		return bookedDlTable;
+	}
+
+	public int getZbid() {
+		return zbid;
+	}
+
+	public void setZbid(int zbid) {
+		this.zbid = zbid;
 	}
 }
 

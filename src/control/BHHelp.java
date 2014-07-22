@@ -175,8 +175,10 @@ public class BHHelp {
 	
 	public void rollbackDbConnection(Connection cn){
 		try {
-			cn.rollback();
-			cn.close();
+			if (cn != null){
+				cn.rollback();
+				cn.close();
+			}
 		} catch (SQLException ex) {
 			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
 		} 
@@ -258,7 +260,12 @@ public class BHHelp {
 		}
 
 	}
-	//Select-Methode für DB
+	
+	/**Select Befehl für DB
+	 * 
+	 * @param SQLquery
+	 * @return
+	 */
 	public String selectDB(String SQLquery) 
 	{ 
 		try 
@@ -271,13 +278,10 @@ public class BHHelp {
 
 			Class.forName( sDbDriver ); 
 			Connection cn = DriverManager.getConnection( sDbUrl, sUsr, sPwd ); 
-			Statement st = cn.createStatement(); 
-			ResultSet rs = st.executeQuery(SQLquery);
-			rs.next();
-			String result = rs.getString(1);
-
-			st.close(); 
-			cn.close(); 
+			
+			String result = selectDbWithCon(SQLquery, cn);
+			
+			cn.close();
 			return result;
 		} 
 		catch (SQLException ex) 
@@ -290,16 +294,43 @@ public class BHHelp {
 			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage());
 			return "";
 		} 
-
-
 	}
+	
+	/**
+	 * Select-Befehl mit übergebener Connection
+	 */
+	public String selectDbWithCon(String SQLquery, Connection cn){
+		
+		try {
+			Statement st = cn.createStatement();
+			ResultSet rs = st.executeQuery(SQLquery);
+			rs.next();
+			String result = rs.getString(1);
+
+			st.close(); 
+			
+			return result;
+		} catch (SQLException ex) 
+		{ 
+			JOptionPane.showMessageDialog(new JFrame(),ex.getMessage()); 
+			return "";
+		} 
+	}
+	
 	//Updaten der SQL-Tabellen
 	public void updateTable(JPanel contentpane, JScrollPane scrollPane, JTableview jtv, String query, int x, int y, int width, int height, Connection con){
 
 		scrollPane.setVisible(false);
 		contentpane.remove(scrollPane);
 		scrollPane = null;
-		jtv = new JTableview(query, con);
+		jtv = null;
+		if (con == null){
+			jtv = new JTableview(query);
+		}
+		else {
+			jtv = new JTableview(query, con);
+		}
+		
 		JTable table = jtv.getSQLTable();
 		scrollPane = new JScrollPane(table);
 		scrollPane.setBounds(x, y, width, height);
