@@ -88,18 +88,24 @@ public class BHHelp {
 	//Zimmerbuchungsdatum überprüfen
 	public void checkBookingDate(Date vonDate, Date bisDate) throws GUIException{
 
+		if(vonDate.getDay() == bisDate.getDay() && vonDate.getMonth() == bisDate.getMonth() && vonDate.getYear() == bisDate.getYear()){
+			throw new GUIException("Buchungsdatum überprüfen3!");
+		}
+		
 		Calendar cNow = new GregorianCalendar();
 		Calendar cVonDate = new GregorianCalendar();
 		Calendar cBisDate = new GregorianCalendar();
 		cNow.setTime(new Date());
 		cVonDate.setTime(vonDate);
 		cBisDate.setTime(bisDate);
-
+		
+		
 		if (cVonDate.before(cNow) || cBisDate.before(cNow)) 
-			throw new GUIException("Buchungsdatum überprüfen!");
-
+			throw new GUIException("Buchungsdatum überprüfen1!");
+		
 		if(cVonDate.after(cBisDate))
-			throw new GUIException("Buchungsdatum überprüfen!");		
+			throw new GUIException("Buchungsdatum überprüfen2!");
+		
 	}
 	//Telefonnummer überprüfen
 	public void checkTel(String a, String b, String c) throws GUIException{
