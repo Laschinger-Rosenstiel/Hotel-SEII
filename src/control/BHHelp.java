@@ -40,15 +40,21 @@ public class BHHelp {
 		Calendar cPast = new GregorianCalendar();
 		Calendar cGeb = new GregorianCalendar();
 		Calendar cNow = new GregorianCalendar();
+		Calendar cYoung = new GregorianCalendar();
 		Date now = new Date();
 
+		cYoung.setTime(now);
+		cYoung.add(Calendar.YEAR, -16);
 		cPast.setTime(now);
 		cPast.add(Calendar.YEAR, -120);
 		cGeb.setTime(geb);
 
 		if (cGeb.before(cPast) ) {
 			throw new GUIException("Geburtsdatum überprüfen!");
-		}	
+		}
+		if (cGeb.after(cYoung)){
+			throw new GUIException("Geburtsdatum überprüfen!");
+		}
 		if (cGeb.after(cNow)) {
 			throw new GUIException("Geburtsdatum überprüfen!");
 		}
