@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -114,8 +113,6 @@ public class TestHelp {
 				Statement st = cn.createStatement(); 
 				st.execute(SQLquery); 
 				st.close();
-				System.out.println(SQLquery);
-				
 			} 
 			catch (SQLException ex) 
 			{ 
