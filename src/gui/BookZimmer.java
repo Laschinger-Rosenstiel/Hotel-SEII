@@ -615,7 +615,7 @@ public class BookZimmer extends GUIHelp{
 				labelOverviewZimmer.setBounds(x_column1, y_line6, x_width, y_height);
 				contentpane5.add(labelOverviewZimmer);
 				
-				bookedZimmer2 = BHBookZimmer.getBuchung().getBookedZimmerTable(ButtonHandler.getCon());
+				bookedZimmer2 = ButtonHandler.getBookedZimmerTable(ButtonHandler.getCon());
 				spShowBookedZimmer = new JScrollPane(bookedZimmer2.getSQLTable());
 				spShowBookedZimmer.setBounds(x_column1, y_line7, 300, 100);
 				contentpane5.add(spShowBookedZimmer);
@@ -627,7 +627,7 @@ public class BookZimmer extends GUIHelp{
 				labelOverviewDl.setBounds(x_column5, y_line6, 180, y_height);
 				contentpane5.add(labelOverviewDl);
 				
-				bookedDl2 = BHBookZimmer.getBuchung().getBookedDlTable(ButtonHandler.getCon());
+				bookedDl2 = ButtonHandler.getBookedDlTable(ButtonHandler.getCon());
 				spShowBookedDl = new JScrollPane(bookedDl2.getSQLTable());
 				spShowBookedDl.setBounds(x_column5, y_line7, 300, 100);
 				contentpane5.add(spShowBookedDl);

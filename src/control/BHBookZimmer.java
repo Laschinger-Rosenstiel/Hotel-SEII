@@ -5,7 +5,6 @@ import gui.StartFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -266,7 +265,7 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 					guiZimmer.scrollPaneBookedZimmer.setVisible(false);
 					guiZimmer.contentpane3.remove(guiZimmer.scrollPaneBookedZimmer);
 				}	
-				guiZimmer.bookedZimmer = getBuchung().getBookedZimmerTable(con);
+				guiZimmer.bookedZimmer = getBookedZimmerTable(con);
 				guiZimmer.scrollPaneBookedZimmer = new JScrollPane(guiZimmer.bookedZimmer.getSQLTable());
 				guiZimmer.scrollPaneBookedZimmer.setBounds(500, 280, 300, 100);
 				guiZimmer.contentpane3.add(guiZimmer.scrollPaneBookedZimmer);
@@ -284,9 +283,7 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 				JOptionPane.showMessageDialog(null, "Bitte alle Felder ausfüllen!", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-			catch (SQLException sex) {
-				JOptionPane.showMessageDialog(null, sex, "Error", JOptionPane.ERROR_MESSAGE);
-			}
+			
 		}
 		
 		else if (e.getActionCommand().equals("BACK")){ 
@@ -329,7 +326,8 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 					guiZimmer.scrollPaneBookedDl.setVisible(false);
 					guiZimmer.contentpane4.remove(guiZimmer.scrollPaneBookedDl);
 				}	
-				guiZimmer.bookedDl = getBuchung().getBookedDlTable(con);
+				//guiZimmer.bookedDl = getBuchung().getBookedDlTable(con);
+				guiZimmer.bookedDl = getBookedDlTable(con);
 				guiZimmer.scrollPaneBookedDl = new JScrollPane(guiZimmer.bookedDl.getSQLTable());
 				guiZimmer.scrollPaneBookedDl.setBounds(470, 80, 300, 100);
 				guiZimmer.contentpane4.add(guiZimmer.scrollPaneBookedDl);
@@ -468,5 +466,30 @@ public class BHBookZimmer extends BHHelp implements ActionListener{
 
 	public static void setBuchung(Buchung buchung) {
 		BHBookZimmer.buchung = buchung;
+	}
+	
+	public JTableview getBookedDlTable (Connection con){
+		String query = "SELECT dl.Bezeichnung, dlb.Datum from `dl-buchung` dlb, dienstleistung dl where dlb.BID =" + buchung.getBid() +" and dl.did = dlb.did";
+		JTableview bookedDlTable;
+		if (con == null){
+			bookedDlTable = new JTableview(query);
+		}
+		else {
+			bookedDlTable = new JTableview(query, con);
+		}
+		return bookedDlTable;
+	}
+	
+	public JTableview getBookedZimmerTable (Connection con){
+		String query = "select zb.ZID, b.Von, b.Bis from `zimmer-buchung` zb, buchung b where zb.bid = b.BID and zb.bid =" + buchung.getBid();
+		JTableview bookedZimmerTable;
+		if (con == null){
+			bookedZimmerTable = new JTableview(query);
+			
+		}
+		else {
+			bookedZimmerTable = new JTableview(query, con);
+		}
+		return bookedZimmerTable;
 	}
 }

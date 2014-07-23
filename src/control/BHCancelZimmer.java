@@ -6,8 +6,6 @@ import gui.InterfaceCancel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.text.ParseException;
-
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
@@ -65,9 +63,7 @@ public class BHCancelZimmer extends BHHelp implements ActionListener{
 							JOptionPane.ERROR_MESSAGE);
 				}
 				
-				catch(ParseException pex) {
-					JOptionPane.showMessageDialog(null, pex, "Error", JOptionPane.ERROR_MESSAGE);
-				}
+				
 			}
 		}
 		
