@@ -57,7 +57,7 @@ public class BHCancelDl extends BHHelp implements ActionListener{
 					guiDl.setSuche(guiDl.getQuery());
 					guiDl.setScrollPaneNull();
 					guiDl.setScrollPane(guiDl.getSuche().getSQLTable());
-					guiDl.setBoundsScrollPane(10, 280, 1000, 200);
+					guiDl.setBoundsScrollPane(10, 280, 800, 200);
 					guiDl.addToContentPane(guiDl.getScrollPane());
 				}
 				catch (GUIException gex) {
@@ -103,7 +103,7 @@ public class BHCancelDl extends BHHelp implements ActionListener{
 			guiDl.setScrollPaneNull();
 			
 			guiDl.setScrollPane(suche);
-			guiDl.setBoundsScrollPane(10, 280, 1000, 200);
+			guiDl.setBoundsScrollPane(10, 280, 800, 200);
 			guiDl.addToContentPane(guiDl.getScrollPane());
 		}
 	}		

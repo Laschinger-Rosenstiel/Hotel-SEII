@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -86,26 +85,30 @@ public class BHHelp {
 		}
 	}
 	//Zimmerbuchungsdatum überprüfen
-	public void checkBookingDate(Date vonDate, Date bisDate) throws GUIException{
-
-		if(vonDate.getDay() == bisDate.getDay() && vonDate.getMonth() == bisDate.getMonth() && vonDate.getYear() == bisDate.getYear()){
-			throw new GUIException("Buchungsdatum überprüfen3!");
-		}
-		
+	public static void checkBookingDate(Date vonDate, Date bisDate) throws GUIException{
 		Calendar cNow = new GregorianCalendar();
-		Calendar cVonDate = new GregorianCalendar();
-		Calendar cBisDate = new GregorianCalendar();
+		Calendar cVonDate = Calendar.getInstance();
+		Calendar cBisDate = Calendar.getInstance();
 		cNow.setTime(new Date());
 		cVonDate.setTime(vonDate);
 		cBisDate.setTime(bisDate);
 		
+		if(cVonDate.get(Calendar.DAY_OF_MONTH)  == cBisDate.get(Calendar.DAY_OF_MONTH) 
+				&& cVonDate.get(Calendar.MONTH) == cBisDate.get(Calendar.MONTH) 
+				&& cVonDate.get(Calendar.YEAR) == cBisDate.get(Calendar.YEAR)){
+			throw new GUIException("Buchungsdatum überprüfen von gleich bis!");
+			
+		}
 		
-		if (cVonDate.before(cNow) || cBisDate.before(cNow)) 
+		if (cVonDate.before(cNow) || cBisDate.before(cNow)) {
 			throw new GUIException("Buchungsdatum überprüfen1!");
+			
+		}
 		
-		if(cVonDate.after(cBisDate))
+		if(cVonDate.after(cBisDate)){
 			throw new GUIException("Buchungsdatum überprüfen2!");
-		
+		}
+
 	}
 	//Telefonnummer überprüfen
 	public void checkTel(String a, String b, String c) throws GUIException{

@@ -55,7 +55,7 @@ public class CancelZimmer extends GUIHelp implements InterfaceCancel{
 		buttonCancelZimmer.setActionCommand("CancelZimmer?");
 		
 		//Query für SQL-Tabelle in Startpanel wird gesetzt
-		query = "select g.GID, g.Vorname, g.Name, g.Geburtstag, zb.BID, zb.ZBID, zb.ZID, b.Von, b.Bis from gast g, buchung b, `zimmer-buchung` zb	where g.GID = b.GID and b.BID = zb.BID and b.Von > '"+getSQLDate(new Date())+"'";
+		query = "select g.GID, g.Vorname, g.Name, g.Geburtstag, zb.BID, zb.ZBID, zb.ZID, b.Von, b.Bis, b.Erfassungsdatum from gast g, buchung b, `zimmer-buchung` zb	where g.GID = b.GID and b.BID = zb.BID and b.Von > '"+getSQLDate(new Date())+"'";
 		
 		//Koordinaten und Größe der GUI-Objekte wird gesetzt und zu contentpane hinzugefügt
 		labelCancelZimmer.setBounds(x_column1, y_line1, 200, y_height);
@@ -87,7 +87,7 @@ public class CancelZimmer extends GUIHelp implements InterfaceCancel{
 		sucheBu = new JTableview(query);
 		JTable suche = sucheBu.getSQLTable();
 		scrollPaneSuche = new JScrollPane(suche);
-		scrollPaneSuche.setBounds(x_column1, y_line7, 1000, 200);
+		scrollPaneSuche.setBounds(x_column1, y_line7, 800, 200);
 		contentpane1.add(scrollPaneSuche);
 		
 		//Hintergrundfarbe

@@ -55,7 +55,7 @@ public class BHCancelZimmer extends BHHelp implements ActionListener{
 					guiZimmer.setSuche(guiZimmer.getQuery());
 					guiZimmer.setScrollPaneNull();
 					guiZimmer.setScrollPane(guiZimmer.getSuche().getSQLTable());
-					guiZimmer.setBoundsScrollPane(10, 280, 1000, 200);
+					guiZimmer.setBoundsScrollPane(10, 280, 800, 200);
 					guiZimmer.addToContentPane(guiZimmer.getScrollPane());
 				}
 				catch (GUIException gex) {
@@ -102,7 +102,7 @@ public class BHCancelZimmer extends BHHelp implements ActionListener{
 			
 			guiZimmer.setScrollPaneNull();
 			guiZimmer.setScrollPane(suche);
-			guiZimmer.setBoundsScrollPane(10, 280, 1000, 200);
+			guiZimmer.setBoundsScrollPane(10, 280, 800, 200);
 			guiZimmer.addToContentPane(guiZimmer.getScrollPane());
 
 		}

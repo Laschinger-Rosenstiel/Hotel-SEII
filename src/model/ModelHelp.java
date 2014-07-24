@@ -114,8 +114,6 @@ public class ModelHelp {
 				Statement st = cn.createStatement(); 
 				st.execute(SQLquery); 
 				st.close();
-				System.out.println(SQLquery);
-				
 			} 
 			catch (SQLException ex) 
 			{ 

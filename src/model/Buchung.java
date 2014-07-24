@@ -53,40 +53,25 @@ public class Buchung extends ModelHelp{
 	 */
 	public void bookZimmer(Connection con) {
 	
-		
+		//Aufenthaltsdauer wird berechnet
 		long days = getBookedDays(getVon(), getBis());
-		//Aufenthaltsdauer wurde berechnet
-		//Preis wird berechnet
-		String preis = selectDB("select Preis from zimmer where ZID = '"+ zimmer.getZid()+"'");
+		
+		
 		//hotel-zimmerbuchung wird geschrieben
 		String queryZimmerBooking = "INSERT INTO `zimmer-buchung` (BID, ZID) VALUES("+getBid()+", "+zimmer.getZid()+
 				")";
 		setZbid(writeDbAi(queryZimmerBooking, con));
 		//Gesamtpreis wird berechnet und gesetzt
+		
+		//Preis wird berechnet
+				
+		String preis = selectDB("select Preis from zimmer where ZID = '"+ zimmer.getZid()+"'");
+				
 		String queryUpdatePreis = "update buchung set Gesamtpreis = Gesamtpreis+"+preis+"*"+days+ " where BID = "+this.bid;
-		
-		writeDb(queryUpdatePreis, con);	
+		writeDb(queryUpdatePreis, con);
 	}
 	
-	public long getBookedDays(Date von, Date bis){
-		
-		Calendar Von = new GregorianCalendar();
-		Calendar Bis = new GregorianCalendar();
-		
-		Von.setTime(von);
-		Bis.setTime(bis);
-		
-		
-		long time = Bis.getTime().getTime() - Von.getTime().getTime();  // Differenz in ms
-		long days = Math.round( (double)time / (24. * 60.*60.*1000.) );     // Differenz in Tagen
-		
-		return days;
-	}
 	
-	public String getPreis(int bid, Connection con){
-		String query = "select buchung.Gesamtpreis from buchung where BID = "+bid;
-		return selectDbWithCon(query, con);
-	}
 	
 	public void bookDl(Buchung buchung, Dienstleistung dl, Connection con) {
 		
@@ -109,8 +94,6 @@ public class Buchung extends ModelHelp{
 			
 			String von = selectDbWithCon("select Von from buchung where bid = "+buchung.getBid(),con); 
 			String bis = selectDbWithCon("select Bis from buchung where bid = "+buchung.getBid(),con); 
-			
-			
 			Date Von;
 		
 			Von = new SimpleDateFormat("yyyy-MM-dd").parse(von);
@@ -142,6 +125,26 @@ public class Buchung extends ModelHelp{
 		//Gesamtpreis wird berechnet
 		writeDb("update buchung set Gesamtpreis = Gesamtpreis - (select Preis from dienstleistung where DID = '" + dl.getDid() +"')", con);
 		writeDb("delete from `dl-buchung` where DLBID = "+dlbid, con);
+	}
+	
+	public long getBookedDays(Date von, Date bis){
+		
+		Calendar Von = new GregorianCalendar();
+		Calendar Bis = new GregorianCalendar();
+		
+		Von.setTime(von);
+		Bis.setTime(bis);
+		
+		
+		long time = Bis.getTime().getTime() - Von.getTime().getTime();  // Differenz in ms
+		long days = Math.round( (double)time / (24. * 60.*60.*1000.) );     // Differenz in Tagen
+		
+		return days;
+	}
+	
+	public String getPreis(int bid, Connection con){
+		String query = "select buchung.Gesamtpreis from buchung where BID = "+bid;
+		return selectDbWithCon(query, con);
 	}
 	
 	//getter- und setter-Methoden

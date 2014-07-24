@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
+import javax.swing.JOptionPane;
 
 import model.Buchung;
 import model.Dienstleistung;
@@ -14,6 +17,9 @@ import model.Zimmer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import control.BHHelp;
+import control.GUIException;
 
 
 public class BuchungTest extends TestHelp{
@@ -72,9 +78,20 @@ public class BuchungTest extends TestHelp{
 				st2.execute("TRUNCATE gast"); 
 				st2.close();
 		
+		Statement st4 = cn.createStatement();
+				st4.execute("TRUNCATE buchung");
+				
+		Statement st5 = cn.createStatement();
+				st5.execute("TRUNCATE `dl-buchung`");
+		
+		Statement st6 = cn.createStatement();
+				st6.execute("TRUNCATE `zimmer-buchung`");
+				
 		Statement st3 = cn.createStatement(); 
 				st3.execute("SET FOREIGN_KEY_CHECKS=1"); 
-				st3.close();		
+				st3.close();	
+				
+		
 	}
 
 	@Test
@@ -138,13 +155,11 @@ public class BuchungTest extends TestHelp{
 		String erfDatum = selectDB("select Erfassungsdatum from buchung where bid = "+ buchung.getBid());
 		String vonDatum = selectDB("select Von from buchung where bid = " + buchung.getBid());
 		String bisDatum = selectDB("select Bis from buchung where bid = " + buchung.getBid());
-		getSQLDate(vonDate);
-		getSQLDate(bisDate);
+
 		assertTrue("GID der Buchung: " + gastId + " = " +gid, gid == gastId);
 		assertTrue("Erfassungsdatum der Buchung: "+erfDatum + " = " + getSQLDate(new Date()), erfDatum.equals(getSQLDate(new Date())));
 		assertTrue("Von-Datum der Buchung: "+vonDatum+" = "+ getSQLDate(vonDate), vonDatum.equals(getSQLDate(vonDate)));
 		assertTrue("Bis-Datum der Buchung: "+bisDatum+" = "+ getSQLDate(bisDate), bisDatum.equals(getSQLDate(bisDate)));
-		
 		}
 
 	@Test
@@ -152,15 +167,11 @@ public class BuchungTest extends TestHelp{
 		Buchung buchung = getBuchung();
 		Connection con = openDbConnection();
 		
-		buchung.bookZimmer(con);
-		
+		buchung.bookZimmer(con);		
 		
 		int bid = buchung.getBid();
 		int zbid = buchung.getZbid();
 		String zid = buchung.getZimmer().getZid();
-		
-		
-	
 		
 		Zimmer zimmer2 = new Zimmer("1.001");
 		buchung.setZimmer(zimmer2);
@@ -189,6 +200,183 @@ public class BuchungTest extends TestHelp{
 		assertTrue("ZimmerNr der Zimmerbuchung1: "+zid  + " = " + zimmerId, zimmerId.equals(zid));
 		assertTrue("ZimmerNr der Zimmerbuchung1: "+zid2  + " = " + zimmerId2, zimmerId2.equals(zid2));
 		assertTrue("Gesamtpreis der Buchung: "+gesamtpreis  + " = " + gesamtpreisDb, gesamtpreis == gesamtpreisDb);
+	}
+
+	
+	@Test
+	public void testBookDl() {
+		Calendar von = Calendar.getInstance();
+		von.set(2014, Calendar.AUGUST, 13, 0, 0, 0);
+		Date vonDate = von.getTime();
+		
+		Calendar bis = Calendar.getInstance();
+		bis.set(2014, Calendar.AUGUST, 20, 0, 0, 0);
+		Date bisDate = bis.getTime();
+		
+		Calendar geb = Calendar.getInstance();
+		geb.set(1991, Calendar.JUNE, 13, 0, 0, 0);
+		Date gebDate = geb.getTime();
+		
+		Connection con = openDbConnection();
+		Gast gast = new Gast("Test", "BookDl", "Ichostraße", "4", "81541", "München", "Deutschland", "+49 89 23456", gebDate);
+		gast.addGast(con);
+		
+		Zimmer zimmer = new Zimmer("1.001");
+		Zimmer zimmer2 = new Zimmer("1.002");
+		Dienstleistung dl = new Dienstleistung(2, new Date());
+		Dienstleistung dl2 = new Dienstleistung(3, new Date());
+		Buchung buchung = new Buchung(gast, zimmer, new Date(), vonDate, bisDate);
+		buchung.addBuchung(con);
+		
+		buchung.bookZimmer(con);
+		buchung.setZimmer(zimmer2);
+		buchung.bookZimmer(con);
+		
+		int preisZimmer = Integer.parseInt(selectDbWithCon("select Gesamtpreis from buchung where BID = "+buchung.getBid(), con));
+		
+		buchung.bookDl(buchung, dl, con);
+		int dlbid = buchung.getDlbid();
+		int did = 2;
+		buchung.bookDl(buchung, dl2, con);
+		commitDbConnection(con);
+		closeDbConnection(con);
+		int Gesamtpreis = Integer.parseInt(selectDB("select Gesamtpreis from buchung where BID = "+buchung.getBid()));
+		
+		int dlbid2 = buchung.getDlbid();
+		int did2 = 3;
+		String erfDatum = getSQLDate(new Date());
+		String erfDatum2 = getSQLDate(new Date());
+		
+		
+		int preisD1 = Integer.parseInt(selectDB("select Preis from dienstleistung where did = " +did));
+		int preisD2 = Integer.parseInt(selectDB("select Preis from dienstleistung where did = " +did2));
+		int dId = Integer.parseInt(selectDB("select DID from `dl-buchung` where DLBID = "+dlbid));
+		int bId = Integer.parseInt(selectDB("select BID from `dl-buchung` where DLBID = "+dlbid));
+		int bId2 = Integer.parseInt(selectDB("select BID from `dl-buchung` where DLBID = "+dlbid2));
+		
+		int dId2 = Integer.parseInt(selectDB("select DID from `dl-buchung` where DLBID = "+dlbid2));
+		
+		String erfDate = selectDB("select Datum from `dl-buchung` where DLBID = "+dlbid);
+		String erfDate2 = selectDB("select Datum from `dl-buchung` where DLBID = "+dlbid2);
+		
+		assertTrue("DID der Dl-Buchung: "+did+ " = " + dId, did == dId);
+		assertTrue("DID der Dl-Buchung2: "+did2+ " = " + dId2, did2 == dId2);
+		assertTrue("BID der Dl-Buchungen: "+bId2+ " = " + bId, bId2 == bId);
+		assertTrue("Datum der Dl-Buchung: "+erfDatum+ " = " + erfDate, erfDatum.equals(erfDate));
+		assertTrue("Datum der Dl-Buchung2: "+erfDatum2+ " = " + erfDate2, erfDatum2.equals(erfDate2));
+		assertTrue("Preis wird richtig berechnet: " + Gesamtpreis + " = " + preisZimmer+preisD1+ preisD2, Gesamtpreis == preisZimmer + preisD1 + preisD2);
+	}
+	
+	
+
+
+	@Test
+	public void testCancelZimmer() {
+		Calendar von = Calendar.getInstance();
+		von.set(2014, Calendar.AUGUST, 13, 0, 0, 0);
+		Date vonDate = von.getTime();
+		
+		Calendar bis = Calendar.getInstance();
+		bis.set(2014, Calendar.AUGUST, 20, 0, 0, 0);
+		Date bisDate = bis.getTime();
+		
+		Calendar geb = Calendar.getInstance();
+		geb.set(1991, Calendar.JUNE, 13, 0, 0, 0);
+		Date gebDate = geb.getTime();
+		
+		Connection con = openDbConnection();
+		Gast gast = new Gast("Test", "CancelZimmer", "Ichostraße", "4", "81541", "München", "Deutschland", "+49 89 23456", gebDate);
+		gast.addGast(con);
+		
+		Zimmer zimmer = new Zimmer("1.001");
+		Zimmer zimmer2 = new Zimmer("1.002");
+		Buchung buchung = new Buchung(gast, zimmer, new Date(), vonDate, bisDate);
+		buchung.addBuchung(con);
+		
+		buchung.bookZimmer(con);
+		buchung.setZimmer(zimmer2);
+		buchung.bookZimmer(con);
+		
+		commitDbConnection(con);
+		closeDbConnection(con);
+		
+		int anzahlBuchungen = Integer.parseInt(selectDB("select count(*) from `zimmer-buchung` where BID = " + buchung.getBid()));
+		
+		Connection con2 = openDbConnection();
+		buchung.cancelZimmer(buchung, con2);
+		commitDbConnection(con2);
+		closeDbConnection(con2);
+		
+		int anzahlBuchungen2 = Integer.parseInt(selectDB("select count(*) from `zimmer-buchung` where BID = " + buchung.getBid()));
+		
+		
+		
+		String zimmerId = selectDB("select ZID from `zimmer-buchung` where BID = "+ buchung.getBid());
+		
+		int preisZimmer1 = Integer.parseInt(selectDB("select Preis from zimmer where ZID = '"+zimmer.getZid()+"'")); 
+		long days = buchung.getBookedDays(vonDate, bisDate);
+		int gesamtpreis = (int) (preisZimmer1 * days);
+		int gesamtpreisDb = Integer.parseInt(selectDB("select Gesamtpreis from buchung where BID = " +buchung.getBid())) ;
+	
+		assertTrue("ZimmerNr der übrigen Zimmerbuchung: "+zimmerId  + " = 1.001", zimmerId.equals("1.001"));
+		assertTrue("Anzahl Buchungen kleiner geworden: ",  anzahlBuchungen2 + 1 == anzahlBuchungen);
+		assertTrue("Gesamtpreis der Buchung: "+gesamtpreis  + " = " + gesamtpreisDb, gesamtpreis == gesamtpreisDb);
+	}
+
+	@Test
+	public void testCancelDl() {
+		Calendar von = Calendar.getInstance();
+		von.set(2014, Calendar.AUGUST, 13, 0, 0, 0);
+		Date vonDate = von.getTime();
+		
+		Calendar bis = Calendar.getInstance();
+		bis.set(2014, Calendar.AUGUST, 20, 0, 0, 0);
+		Date bisDate = bis.getTime();
+		
+		Calendar geb = Calendar.getInstance();
+		geb.set(1991, Calendar.JUNE, 13, 0, 0, 0);
+		Date gebDate = geb.getTime();
+		
+		Connection con = openDbConnection();
+		Gast gast = new Gast("Test", "CancelDl", "Ichostraße", "4", "81541", "München", "Deutschland", "+49 89 23456", gebDate);
+		gast.addGast(con);
+		
+		Zimmer zimmer = new Zimmer("1.001");
+		Zimmer zimmer2 = new Zimmer("1.002");
+		Dienstleistung dl = new Dienstleistung(2, new Date());
+		Dienstleistung dl2 = new Dienstleistung(3, new Date());
+		Buchung buchung = new Buchung(gast, zimmer, new Date(), vonDate, bisDate);
+		buchung.addBuchung(con);
+		
+		buchung.bookZimmer(con);
+		buchung.setZimmer(zimmer2);
+		buchung.bookZimmer(con);
+		
+		int preisZimmer = Integer.parseInt(selectDbWithCon("select Gesamtpreis from buchung where BID = "+buchung.getBid(), con));
+		
+		buchung.bookDl(buchung, dl, con);
+		int dlbid = buchung.getDlbid();
+		int did = 2;
+		buchung.bookDl(buchung, dl2, con);
+		commitDbConnection(con);
+		closeDbConnection(con);
+		int anzahlDl = Integer.parseInt(selectDB("select count(*) from `dl-buchung` where BID = "+buchung.getBid()));
+		
+		Connection con2 = openDbConnection();
+		buchung.cancelDl(buchung, dl2, con2);
+		commitDbConnection(con2);
+		closeDbConnection(con2);
+		int anzahlDl2 = Integer.parseInt(selectDB("select count(*) from `dl-buchung` where BID = "+buchung.getBid()));
+		int Gesamtpreis = Integer.parseInt(selectDB("select Gesamtpreis from buchung where BID = "+buchung.getBid()));
+		
+		int preisD1 = Integer.parseInt(selectDB("select Preis from dienstleistung where did = " +did));
+		int dlbId = Integer.parseInt(selectDB("select DLBID from `dl-buchung` where BID = "+buchung.getBid()));
+		int bId = Integer.parseInt(selectDB("select BID from `dl-buchung` where DLBID = "+dlbid));
+			
+		assertTrue("DLBID der übrigen Dl-Buchung: "+dlbId+ " = " + dlbid, dlbId == dlbid);
+		assertTrue("BID der Dl-Buchungen: "+buchung.getBid()+ " = " + bId, buchung.getBid() == bId);
+		assertTrue("Anzahl wird um eine Dl verringert: ", anzahlDl2+1==anzahlDl);
+		assertTrue("Preis wird richtig berechnet: " + Gesamtpreis + " = " + preisZimmer+preisD1, Gesamtpreis == preisZimmer + preisD1);
 	}
 
 	@Test
@@ -245,184 +433,9 @@ public class BuchungTest extends TestHelp{
 		long days = buchung.getBookedDays(vonDate, bisDate);
 		int gesamtpreis = (int) (preisZimmer1 * days + preisZimmer2* days);
 		int gesamtpreisDb = Integer.parseInt(selectDB("select Gesamtpreis from buchung where BID = " +buchung.getBid())) ;
-		assertTrue("Gesamtpreis der Buchung: "+gesamtpreis  + " = " + gesamtpreisDb, gesamtpreis == gesamtpreisDb);
-		
-		
+		assertTrue("Gesamtpreis der Buchung: "+gesamtpreis  + " = " + gesamtpreisDb, gesamtpreis == gesamtpreisDb);	
 	}
 
-	@Test
-	public void testBookDl() {
-		Calendar von = Calendar.getInstance();
-		von.set(2014, Calendar.AUGUST, 13, 0, 0, 0);
-		Date vonDate = von.getTime();
-		
-		Calendar bis = Calendar.getInstance();
-		bis.set(2014, Calendar.AUGUST, 20, 0, 0, 0);
-		Date bisDate = bis.getTime();
-		
-		Calendar geb = Calendar.getInstance();
-		geb.set(1991, Calendar.JUNE, 13, 0, 0, 0);
-		Date gebDate = geb.getTime();
-		
-		Connection con = openDbConnection();
-		Gast gast = new Gast("Test", "GetPreis", "Ichostraße", "4", "81541", "München", "Deutschland", "+49 89 23456", gebDate);
-		gast.addGast(con);
-		
-		Zimmer zimmer = new Zimmer("1.001");
-		Zimmer zimmer2 = new Zimmer("1.002");
-		Dienstleistung dl = new Dienstleistung(2, new Date());
-		Dienstleistung dl2 = new Dienstleistung(3, new Date());
-		Buchung buchung = new Buchung(gast, zimmer, new Date(), vonDate, bisDate);
-		buchung.addBuchung(con);
-		
-		buchung.bookZimmer(con);
-		buchung.setZimmer(zimmer2);
-		buchung.bookZimmer(con);
-		
-		int preisZimmer = Integer.parseInt(selectDbWithCon("select Gesamtpreis from buchung where BID = "+buchung.getBid(), con));
-		
-		buchung.bookDl(buchung, dl, con);
-		int dlbid = buchung.getDlbid();
-		int did = 2;
-		buchung.bookDl(buchung, dl2, con);
-		commitDbConnection(con);
-		closeDbConnection(con);
-		int Gesamtpreis = Integer.parseInt(selectDB("select Gesamtpreis from buchung where BID = "+buchung.getBid()));
-		
-		int dlbid2 = buchung.getDlbid();
-		int did2 = 3;
-		String erfDatum = getSQLDate(new Date());
-		String erfDatum2 = getSQLDate(new Date());
-		
-		
-		int preisD1 = Integer.parseInt(selectDB("select Preis from dienstleistung where did = " +did));
-		int preisD2 = Integer.parseInt(selectDB("select Preis from dienstleistung where did = " +did2));
-		int dId = Integer.parseInt(selectDB("select DID from `dl-buchung` where DLBID = "+dlbid));
-		int bId = Integer.parseInt(selectDB("select BID from `dl-buchung` where DLBID = "+dlbid));
-		int dId2 = Integer.parseInt(selectDB("select DID from `dl-buchung` where DLBID = "+dlbid2));
-		
-		String erfDate = selectDB("select Datum from `dl-buchung` where DLBID = "+dlbid);
-		String erfDate2 = selectDB("select Datum from `dl-buchung` where DLBID = "+dlbid2);
-		
-		assertTrue("DID der Dl-Buchung: "+did+ " = " + dId, did == dId);
-		assertTrue("DID der Dl-Buchung2: "+did2+ " = " + dId2, did2 == dId2);
-		assertTrue("BID der Dl-Buchungen: "+buchung.getBid()+ " = " + bId, buchung.getBid() == bId);
-		assertTrue("Datum der Dl-Buchung: "+erfDatum+ " = " + erfDate, erfDatum.equals(erfDate));
-		assertTrue("Datum der Dl-Buchung2: "+erfDatum2+ " = " + erfDate2, erfDatum2.equals(erfDate2));
-		assertTrue("Preis wird richtig berechnet: " + Gesamtpreis + " = " + preisZimmer+preisD1+ preisD2, Gesamtpreis == preisZimmer + preisD1 + preisD2);
-	}
-
-
-	@Test
-	public void testCancelZimmer() {
-		Calendar von = Calendar.getInstance();
-		von.set(2014, Calendar.AUGUST, 13, 0, 0, 0);
-		Date vonDate = von.getTime();
-		
-		Calendar bis = Calendar.getInstance();
-		bis.set(2014, Calendar.AUGUST, 20, 0, 0, 0);
-		Date bisDate = bis.getTime();
-		
-		Calendar geb = Calendar.getInstance();
-		geb.set(1991, Calendar.JUNE, 13, 0, 0, 0);
-		Date gebDate = geb.getTime();
-		
-		Connection con = openDbConnection();
-		Gast gast = new Gast("Test", "GetPreis", "Ichostraße", "4", "81541", "München", "Deutschland", "+49 89 23456", gebDate);
-		gast.addGast(con);
-		
-		Zimmer zimmer = new Zimmer("1.001");
-		Zimmer zimmer2 = new Zimmer("1.002");
-		Buchung buchung = new Buchung(gast, zimmer, new Date(), vonDate, bisDate);
-		buchung.addBuchung(con);
-		
-		buchung.bookZimmer(con);
-		buchung.setZimmer(zimmer2);
-		buchung.bookZimmer(con);
-		
-		commitDbConnection(con);
-		closeDbConnection(con);
-		
-		int anzahlBuchungen = Integer.parseInt(selectDB("select count(*) from `zimmer-buchung` where BID = " + buchung.getBid()));
-		
-		Connection con2 = openDbConnection();
-		buchung.cancelZimmer(buchung, con2);
-		commitDbConnection(con2);
-		closeDbConnection(con2);
-		
-		int anzahlBuchungen2 = Integer.parseInt(selectDB("select count(*) from `zimmer-buchung` where BID = " + buchung.getBid()));
-		
-		
-		
-		String zimmerId = selectDB("select ZID from `zimmer-buchung` where BID = "+ buchung.getBid());
-		
-		int preisZimmer1 = Integer.parseInt(selectDB("select Preis from zimmer where ZID = '"+zimmer.getZid()+"'")); 
-		long days = buchung.getBookedDays(vonDate, bisDate);
-		int gesamtpreis = (int) (preisZimmer1 * days);
-		int gesamtpreisDb = Integer.parseInt(selectDB("select Gesamtpreis from buchung where BID = " +buchung.getBid())) ;
-	
-		assertTrue("ZimmerNr der übrigen Zimmerbuchung: "+zimmerId  + " = 1.001", zimmerId.equals("1.001"));
-		assertTrue("Anzahl Buchungen kleiner geworden: ",  anzahlBuchungen2 + 1 == anzahlBuchungen);
-		assertTrue("Gesamtpreis der Buchung: "+gesamtpreis  + " = " + gesamtpreisDb, gesamtpreis == gesamtpreisDb);
-	}
-
-	@Test
-	public void testCancelDl() {
-		Calendar von = Calendar.getInstance();
-		von.set(2014, Calendar.AUGUST, 13, 0, 0, 0);
-		Date vonDate = von.getTime();
-		
-		Calendar bis = Calendar.getInstance();
-		bis.set(2014, Calendar.AUGUST, 20, 0, 0, 0);
-		Date bisDate = bis.getTime();
-		
-		Calendar geb = Calendar.getInstance();
-		geb.set(1991, Calendar.JUNE, 13, 0, 0, 0);
-		Date gebDate = geb.getTime();
-		
-		Connection con = openDbConnection();
-		Gast gast = new Gast("Test", "GetPreis", "Ichostraße", "4", "81541", "München", "Deutschland", "+49 89 23456", gebDate);
-		gast.addGast(con);
-		
-		Zimmer zimmer = new Zimmer("1.001");
-		Zimmer zimmer2 = new Zimmer("1.002");
-		Dienstleistung dl = new Dienstleistung(2, new Date());
-		Dienstleistung dl2 = new Dienstleistung(3, new Date());
-		Buchung buchung = new Buchung(gast, zimmer, new Date(), vonDate, bisDate);
-		buchung.addBuchung(con);
-		
-		buchung.bookZimmer(con);
-		buchung.setZimmer(zimmer2);
-		buchung.bookZimmer(con);
-		
-		int preisZimmer = Integer.parseInt(selectDbWithCon("select Gesamtpreis from buchung where BID = "+buchung.getBid(), con));
-		
-		buchung.bookDl(buchung, dl, con);
-		int dlbid = buchung.getDlbid();
-		int did = 2;
-		buchung.bookDl(buchung, dl2, con);
-		commitDbConnection(con);
-		closeDbConnection(con);
-		int anzahlDl = Integer.parseInt(selectDB("select count(*) from `dl-buchung` where BID = "+buchung.getBid()));
-		
-		Connection con2 = openDbConnection();
-		buchung.cancelDl(buchung, dl2, con2);
-		commitDbConnection(con2);
-		closeDbConnection(con2);
-		int anzahlDl2 = Integer.parseInt(selectDB("select count(*) from `dl-buchung` where BID = "+buchung.getBid()));
-		int Gesamtpreis = Integer.parseInt(selectDB("select Gesamtpreis from buchung where BID = "+buchung.getBid()));
-		
-		int preisD1 = Integer.parseInt(selectDB("select Preis from dienstleistung where did = " +did));
-		int dlbId = Integer.parseInt(selectDB("select DLBID from `dl-buchung` where BID = "+buchung.getBid()));
-		int bId = Integer.parseInt(selectDB("select BID from `dl-buchung` where DLBID = "+dlbid));
-			
-		assertTrue("DLBID der übrigen Dl-Buchung: "+dlbId+ " = " + dlbid, dlbId == dlbid);
-		assertTrue("BID der Dl-Buchungen: "+buchung.getBid()+ " = " + bId, buchung.getBid() == bId);
-		assertTrue("Anzahl wird um eine Dl verringert: ", anzahlDl2+1==anzahlDl);
-		assertTrue("Preis wird richtig berechnet: " + Gesamtpreis + " = " + preisZimmer+preisD1, Gesamtpreis == preisZimmer + preisD1);
-	}
-
-	
 	
 	@Test
 	public void testGetBid() {
@@ -505,7 +518,7 @@ public class BuchungTest extends TestHelp{
 		geb.set(1991, Calendar.JUNE, 13, 0, 0, 0);
 		Date gebDate = geb.getTime();
 
-		Gast gast = new Gast("Test", "GetPreis", "Ichostraße", "4", "81541", "München", "Deutschland", "+49 89 23456", gebDate);
+		Gast gast = new Gast("Test", "GetZimmer", "Ichostraße", "4", "81541", "München", "Deutschland", "+49 89 23456", gebDate);
 		Zimmer zimmer = new Zimmer("1.001", "Massage", 20.0);
 		Buchung buchung = new Buchung(gast, zimmer, new Date(), vonDate, bisDate);
 		
@@ -634,11 +647,72 @@ public class BuchungTest extends TestHelp{
 		Date gebDate = geb.getTime();
 		
 		Zimmer zimmer = new Zimmer("1.001", "Massage", 20.0);
-		Gast gast = new Gast("Test", "GetBis", "Ichostraße", "4", "81541", "München", "Deutschland", "+49 89 23456", gebDate);
+		Gast gast = new Gast("Test", "GetErf", "Ichostraße", "4", "81541", "München", "Deutschland", "+49 89 23456", gebDate);
 		Buchung buchung = new Buchung(gast, zimmer, new Date(), vonDate, bisDate);
 		assertTrue("getErfDate", buchung.getErfassungsdatum().getDay() == new Date().getDay() &&
 							buchung.getErfassungsdatum().getMonth() == new Date().getMonth() &&
 							buchung.getErfassungsdatum().getYear() == new Date().getYear());
 	}
 	
+	
+	@Test
+	public void testCheckBookingDate(){
+		Calendar von1 = new GregorianCalendar();
+		von1.set(2014, Calendar.AUGUST, 13);
+		
+		Calendar bis1 = new GregorianCalendar();
+		bis1.set(2014, Calendar.AUGUST, 20);
+		
+		Calendar von2 = Calendar.getInstance();
+		von2.set(2014, Calendar.AUGUST, 13, 0, 0, 0);
+		Date vonDate2 = von2.getTime();
+		
+		Calendar bis2 = Calendar.getInstance();
+		bis2.set(2014, Calendar.AUGUST, 12, 0, 0, 0);
+		Date bisDate2 = bis2.getTime();
+		
+		Calendar von3 = Calendar.getInstance();
+		von3.set(2014, Calendar.AUGUST, 13, 0, 0, 0);
+		Date vonDate3 = von2.getTime();
+		
+		Calendar bis3 = Calendar.getInstance();
+		bis3.set(2014, Calendar.AUGUST, 12, 0, 0, 0);
+		Date bisDate3 = bis3.getTime();
+		
+		
+		boolean test1, test2, test3;
+		
+		
+		try {
+			BHHelp.checkBookingDate(von1.getTime(), bis1.getTime());	
+			test1 = true;
+		} catch (GUIException e) {
+			JOptionPane.showMessageDialog(null, e + getSQLDate(von1.getTime()) + " "+getSQLDate(bis1.getTime()), "Error",
+					JOptionPane.ERROR_MESSAGE);
+			test1 = false;
+		}
+		
+		try {
+			BHHelp.checkBookingDate(vonDate2, bisDate2);	
+			test2 = true;
+		} catch (GUIException e) {
+			JOptionPane.showMessageDialog(null, e, "Error",
+					JOptionPane.ERROR_MESSAGE);
+			test2 = false;
+		}
+		
+		try {
+			BHHelp.checkBookingDate(vonDate3, bisDate3);	
+			test3 = true;
+		} catch (GUIException e) {
+			JOptionPane.showMessageDialog(null, e, "Error",
+					JOptionPane.ERROR_MESSAGE);
+			test3 = false;
+		}
+		
+		
+		assertTrue("Von und Bis Datum wird richtig eingegeben ", test1 == true);
+		assertTrue("Bis Datum liegt vor Von Datum", test2 == false);
+		assertTrue("Von Datum = Bis Datum", test3 == false);
+	}
 }
